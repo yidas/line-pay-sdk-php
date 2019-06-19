@@ -1,0 +1,21 @@
+{
+    "name": "yidas/line-pay-sdk",
+    "description": "LINE Pay SDK for PHP",
+    "keywords": ["LINE Pay", "api", "php", "sdk", "LINE SDK"],
+    "homepage": "https://github.com/yidas/line-pay-sdk-php",
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/yidas/line-pay-sdk-php/issues",
+        "source": "https://github.com/yidas/line-pay-sdk-php"
+    },
+    "require": {
+        "php": ">=5.4",
+        "guzzlehttp/guzzle": "~5.3.1|~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "yidas\\": "src/"
+        }
+    }
+}
