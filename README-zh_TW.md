@@ -157,7 +157,7 @@ $linePay = new \yidas\linePay\Client([
 $linePay = new \yidas\linePay\Client([
     'channelId' => 'Your merchant X-LINE-ChannelId',
     'channelSecret' => 'Your merchant X-LINE-ChannelSecret',
-    'isSandbox' => ($env=='real') ? false : true, 
+    'isSandbox' => true, 
     'merchantDeviceType' => 'Device type string',
     'merchantDeviceProfileId' => 'Device profile ID string',
 ]);
