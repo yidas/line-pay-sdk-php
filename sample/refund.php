@@ -23,8 +23,9 @@ if ($order['transactionId'] != $transactionId) {
     die("<script>alert('TransactionId doesn\'t match');location.href='./index.php';</script>");
 }
 
-// Online Confirm API
-$response = $linePay->refund($order['transactionId']);
+// Online Refund API
+$refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
+$response = $linePay->refund($order['transactionId'], $refundParams);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {

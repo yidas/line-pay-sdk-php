@@ -79,7 +79,17 @@ $config = isset($_SESSION['config']) ? $_SESSION['config'] : [];
         <a href="./index.php" class="btn btn-light">Go Back</a>
       </div>
       <div class="float-right">
-        <?php if($status=='successful'):?><a href="./refund.php?transactionId=<?=$order['transactionId']?>" class="btn btn-danger">Refund</a><?php endif ?>
+        <?php if($status=='successful'):?>
+
+        <div class="input-group">
+          <input type="text" id="refund-amount" class="form-control" placeholder="Amount" size="7">
+          <div class="input-group-append">
+            <button class="btn btn-danger" type="button" onclick="location.href='./refund.php?transactionId=<?=$order['transactionId']?>&amount=' + document.getElementById('refund-amount').value">Refund</button>
+          </div>
+        </div>
+        <!-- <input type="text" class="form-control" size="5" style="display: inline; width: 50px;" />
+        <a href="./refund.php?transactionId=<?=$order['transactionId']?>" class="btn btn-danger">Refund</a> -->
+        <?php endif ?>
       </div>
     </div>
   </div>
