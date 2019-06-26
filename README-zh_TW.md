@@ -13,6 +13,11 @@ LINE Pay SDK for PHP
 
 [English](https://github.com/yidas/line-pay-sdk-php/blob/master/README.md) | 繁體中文
 
+|LINE Pay API 類型|API 版本|
+|:-:|:-:|
+|Online API|v2|
+|Offline API|v2|
+
 OUTLINE
 -------
 
@@ -483,9 +488,11 @@ $response = $linePay->authorizations([
 外部資源
 =========
 
-[LINE Pay 整合指南 v1.1.2 (TW)](https://pay.line.me/file/guidebook/technicallinking/LINE_Pay_Integration_Guide_for_Merchant-v1.1.2-TW(1).pdf)
+**[LINE Pay Online API v2 指南 (EN)](https://pay.line.me/documents/online_v2_en.html)**
 
-[LINE Pay 線下實體商店整合指南 申請信箱](mailto:dl_tech_support_tw@linecorp.com)
+**[LINE Pay Offline API v2 指南 (TW)](https://pay.line.me/tw/developers/apis/documentOffline?locale=zh_TW)**
+
+[LINE Pay 整合指南 PDF v1.1.2 (TW)](https://pay.line.me/file/guidebook/technicallinking/LINE_Pay_Integration_Guide_for_Merchant-v1.1.2-TW(1).pdf)
 
 [LINE Pay Sandbox 商家帳號建立申請](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=zh_TW)
 
