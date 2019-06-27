@@ -424,7 +424,7 @@ $response = $linePay->oneTimeKeysPay([
 Response時間後20分鐘內，因此商家最長應檢查交易狀態20分鐘。若超過20分鐘，該筆交易則被取消
 
 ```php
-public Response ordersCheck(string $orderId, array $$queryParams=null)
+public Response ordersCheck(string $orderId, array $queryParams=null)
 ```
 
 *Example:*
