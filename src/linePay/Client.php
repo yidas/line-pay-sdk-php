@@ -30,16 +30,17 @@ class Client
      * @var array
      */
     protected static $apiUris = [
-        'details' => '/v2/payments',
-        'reserve' => '/v2/payments/request',
-        'confirm' => '/v2/payments/{transactionId}/confirm',
-        'refund' => '/v2/payments/{transactionId}/refund',
-        'authorizations' => '/v2/payments/authorizations',
-        'authorizationsCapture' => '/v2/payments/authorizations/{transactionId}/capture',
-        'authorizationsVoid' => '/v2/payments/authorizations/{transactionId}/void',
-        'preapproved' => '/v2/payments/preapprovedPay/{regKey}/payment',
-        'preapprovedCheck' => '/v2/payments/preapprovedPay/{regKey}/check',  
-        'preapprovedExpire' => '/v2/payments/preapprovedPay/{regKey}/expire',
+        'request' => '/v3/payments/request',
+        'confirm' => '/v3/payments/{transactionId}/confirm',
+        'refund' => '/v3/payments/{transactionId}/refund',
+        'details' => '/v3/payments',
+        'check' => '/v3/payments/requests/{transactionId}/check',
+        'authorizations' => '/v3/payments/authorizations',
+        'authorizationsCapture' => '/v3/payments/authorizations/{transactionId}/capture',
+        'authorizationsVoid' => '/v3/payments/authorizations/{transactionId}/void',
+        'preapproved' => '/v3/payments/preapprovedPay/{regKey}/payment',
+        'preapprovedCheck' => '/v3/payments/preapprovedPay/{regKey}/check',  
+        'preapprovedExpire' => '/v3/payments/preapprovedPay/{regKey}/expire',
         'oneTimeKeysPay' => '/v2/payments/oneTimeKeys/pay',
         'ordersCheck' => '/v2/payments/orders/{orderId}/check',
         'ordersVoid' => '/v2/payments/orders/{orderId}/void',
@@ -55,22 +56,29 @@ class Client
     protected $httpClient;
 
     /**
+     * Saved LINE Pay Channel Secret for v3 API Authentication
+     *
+     * @var string
+     */
+    protected $channelSecret;
+
+    /**
      * Constructor
      *
-     * @param string|array $optParams API Key or option parameters
+     * @param string|array $bodyParams API Key or option parameters
      *  'key' => Google API Key
      *  'clientID' => Google clientID
      *  'clientSecret' => Google clientSecret
      * @return self
      */
-    function __construct($optParams) 
+    function __construct($bodyParams) 
     {
         // Assignment
-        $channelId = isset($optParams['channelId']) ? $optParams['channelId'] : null;
-        $channelSecret = isset($optParams['channelSecret']) ? $optParams['channelSecret'] : null;
-        $merchantDeviceType = isset($optParams['merchantDeviceType']) ? $optParams['merchantDeviceType'] : null;
-        $merchantDeviceProfileId = isset($optParams['merchantDeviceProfileId']) ? $optParams['merchantDeviceProfileId'] : null;
-        $isSandbox = isset($optParams['isSandbox']) ? $optParams['isSandbox'] : false;
+        $channelId = isset($bodyParams['channelId']) ? $bodyParams['channelId'] : null;
+        $channelSecret = isset($bodyParams['channelSecret']) ? $bodyParams['channelSecret'] : null;
+        $merchantDeviceType = isset($bodyParams['merchantDeviceType']) ? $bodyParams['merchantDeviceType'] : null;
+        $merchantDeviceProfileId = isset($bodyParams['merchantDeviceProfileId']) ? $bodyParams['merchantDeviceProfileId'] : null;
+        $isSandbox = isset($bodyParams['isSandbox']) ? $bodyParams['isSandbox'] : false;
 
         // Check
         if (!$channelId || !$channelSecret) {
@@ -82,9 +90,11 @@ class Client
 
         // Headers
         $headers = [
+            'Content-Type' => 'application/json',
             'X-LINE-ChannelId' => $channelId,
-            'X-LINE-ChannelSecret' => $channelSecret,
         ];
+        // Save channel secret
+        $this->channelSecret = (string) $channelSecret;
         // MerchantDeviceType
         if ($merchantDeviceType) {
             $headers['X-LINE-MerchantDeviceType'] = $merchantDeviceType;
@@ -105,6 +115,49 @@ class Client
     }
 
     /**
+     * Client request handler with version
+     *
+     * @param string $var
+     * @param string $method
+     * @param string $uri
+     * @param array $queryParams
+     * @param array $bodyParams
+     * @return yidas\linePay\Response
+     */
+    protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null)
+    {
+        // Request options
+        $options = [];
+        if ($queryParams) {
+            $options['query'] = $queryParams;
+        }
+        if ($bodyParams) {
+            $options['body'] = json_encode($bodyParams);
+        }
+
+        switch ($version) {
+            case 'v2':
+                // V2 API Authentication
+                $options['headers']['X-LINE-ChannelSecret'] = $this->channelSecret;
+                $response = $this->httpClient->request($method, $uri, $options);
+                break;
+            
+            case 'v3':
+            default:
+                // V3 API Authentication
+                $authNonce = date('c'); // ISO 8601 date
+                $authParams = ($method=='GET' && $queryParams) ? http_build_query($queryParams) : (($bodyParams) ? $options['body'] : null);
+                $authMacText = $this->channelSecret . $uri . $authParams . $authNonce;
+                $options['headers']['X-LINE-Authorization'] = base64_encode(hash_hmac('sha256', $authMacText, $this->channelSecret, true));
+                $options['headers']['X-LINE-Authorization-Nonce'] = $authNonce;
+                $response = $this->httpClient->request($method, $uri, $options);
+                break;
+        }
+
+        return new Response($response);
+    }
+
+    /**
      * Get payment details
      *
      * @param array $queryParams
@@ -112,50 +165,64 @@ class Client
      */
     public function details($queryParams)
     {
-        $response = $this->httpClient->request('GET', self::$apiUris['details'], ['query' => $queryParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams);
     }
 
     /**
-     * Reserve payment
+     * Request payment
      *
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function reserve($optParams)
+    public function request($bodyParams)
     {
-        $response = $this->httpClient->request('POST', self::$apiUris['reserve'], ['json' => $optParams]);
+        return $this->requestHandler('v3', 'POST', self::$apiUris['request'], null, $bodyParams);
+    }
 
-        return new Response($response);
+    /**
+     * Alias of Request payment
+     *
+     * @param array $bodyParams
+     * @return yidas\linePay\Response
+     */
+    public function reserve($bodyParams)
+    {
+        return $this->request($bodyParams);
     }
 
     /**
      * Payment confirm
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function confirm($transactionId, $optParams)
+    public function confirm($transactionId, $bodyParams)
     {
-        $response = $this->httpClient->request('POST', str_replace('{transactionId}', $transactionId, self::$apiUris['confirm']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['confirm']), null, $bodyParams);
     }
 
     /**
      * Refund confirm
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function refund($transactionId, $optParams=null)
+    public function refund($transactionId, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{transactionId}', $transactionId, self::$apiUris['refund']), ['json' => $optParams]);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['refund']), null, $bodyParams);
+    }
 
-        return new Response($response);
+    /**
+     * Check Payment Status API
+     *
+     * @param integer $transactionId
+     * @return yidas\linePay\Response
+     */
+    public function check($transactionId)
+    {
+        return $this->requestHandler('v3', 'GET', str_replace('{transactionId}', $transactionId, self::$apiUris['check']));
     }
 
     /**
@@ -166,75 +233,67 @@ class Client
      */
     public function authorizations($queryParams)
     {
-        $response = $this->httpClient->request('GET', self::$apiUris['authorizations'], ['query' => $queryParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'GET', self::$apiUris['authorizations'], $queryParams);
     }
 
     /**
      * Authorizations capture
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function authorizationsCapture($transactionId, $optParams)
+    public function authorizationsCapture($transactionId, $bodyParams)
     {
-        $response = $this->httpClient->request('POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsCapture']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsCapture']), null, $bodyParams);
     }
 
     /**
      * Alias of Authorizations capture
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function capture($transactionId, $optParams)
+    public function capture($transactionId, $bodyParams)
     {
-        return $this->authorizationsCapture($transactionId, $optParams);
+        return $this->authorizationsCapture($transactionId, $bodyParams);
     }
 
     /**
      * Void Authorization
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function authorizationsVoid($transactionId, $optParams=null)
+    public function authorizationsVoid($transactionId, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsVoid']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsVoid']), null, $bodyParams);
     }
 
     /**
      * Alias of Void Authorization
      *
      * @param integer $transactionId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function void($transactionId, $optParams=null)
+    public function void($transactionId, $bodyParams=null)
     {
-        return $this->authorizationsVoid($transactionId, $optParams);
+        return $this->authorizationsVoid($transactionId, $bodyParams);
     }
 
     /**
      * Void Authorization
      *
      * @param integer $regKey
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function preapproved($regKey, $optParams=null)
+    public function preapproved($regKey, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{regKey}', $regKey, self::$apiUris['preapproved']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapproved']), null, $bodyParams);
     }
 
     /**
@@ -246,91 +305,77 @@ class Client
      */
     public function preapprovedCheck($regKey, $queryParams=null)
     {
-        $response = $this->httpClient->request('GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), ['query' => $queryParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), $queryParams);
     }
 
     /**
      * Void Authorization
      *
      * @param integer $regKey
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function preapprovedExpire($regKey, $optParams=null)
+    public function preapprovedExpire($regKey, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), null, $bodyParams);
     }
 
     /**
      * OneTimeKeys payment
      *
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function oneTimeKeysPay($optParams)
+    public function oneTimeKeysPay($bodyParams)
     {
-        $response = $this->httpClient->request('POST', self::$apiUris['oneTimeKeysPay'], ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v2', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams);
     }
     
     /**
      * Payment Status Check
      *
      * @param string $orderId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
     public function ordersCheck($orderId, $queryParams=null)
     {
-        $response = $this->httpClient->request('GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), ['query' => $queryParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v2', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams);
     }
 
     /**
      * Orders Void
      *
      * @param string $orderId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function ordersVoid($orderId, $optParams=null)
+    public function ordersVoid($orderId, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams);
     }
 
     /**
      * Orders Capture
      *
      * @param string $orderId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function ordersCapture($orderId, $optParams=null)
+    public function ordersCapture($orderId, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams);
     }
 
     /**
      * Orders Refund
      *
      * @param string $orderId
-     * @param array $optParams
+     * @param array $bodyParams
      * @return yidas\linePay\Response
      */
-    public function ordersRefund($orderId, $optParams=null)
+    public function ordersRefund($orderId, $bodyParams=null)
     {
-        $response = $this->httpClient->request('POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), ['json' => $optParams]);
-
-        return new Response($response);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams);
     }
 }

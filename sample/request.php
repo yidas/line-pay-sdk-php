@@ -16,13 +16,33 @@ $linePay = new \yidas\linePay\Client([
 
 // Create an order based on Reserve API parameters
 $orderParams = [
-    'productName' => $input['productName'],
-    'amount' => (integer) $input['amount'],
-    'currency' => $input['currency'],
-    'confirmUrl' => "{$baseUrl}/confirm.php",
-    'productImageUrl' => 'https://scdn.line-apps.com/linepay/partner/images/sp_txt_shape_v4_2.png',
-    'cancelUrl' => "{$baseUrl}/index.php",
-    'orderId' => "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3),
+    "amount" => (integer) $input['amount'],
+    "currency" => $input['currency'],
+    "orderId" => "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3),
+    "packages" => [
+        [
+            "id" => "pid",
+            "amount" => (integer) $input['amount'],
+            "name" => "Package Name",
+            "products" => [
+                [
+                    "name" => $input['productName'],
+                    "quantity" => 1,
+                    "price" => (integer) $input['amount'],
+                    "imageUrl" => 'https://scdn.line-apps.com/linepay/partner/images/sp_txt_shape_v4_2.png',
+                ],
+            ],
+        ],
+    ],
+    "redirectUrls" => [
+        "confirmUrl" => "{$baseUrl}/confirm.php",
+        "cancelUrl" => "{$baseUrl}/index.php",
+    ],
+    "options" => [  
+        "display" => [
+            "checkConfirmUrlBrowser" => true,
+        ],
+    ],
 ];
 
 // Online Reserve API
@@ -30,7 +50,7 @@ $response = $linePay->reserve($orderParams);
 
 // Check Reserve API result
 if (!$response->isSuccessful()) {
-    die("<script>alert('ErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
+    die("<script>alert('ErrorCode {$response['returnCode']}: " . addslashes($response['returnMessage']) . "');history.back();</script>");
 }
 
 // Save the order info to session for confirm

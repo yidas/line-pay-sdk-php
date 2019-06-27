@@ -11,11 +11,12 @@ LINE Pay SDK for PHP
 [![Latest Stable Version](https://poser.pugx.org/yidas/line-pay-sdk/v/stable?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 [![License](https://poser.pugx.org/yidas/line-pay-sdk/license?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 
-[English](https://github.com/yidas/line-pay-sdk-php/blob/master/README.md) | 繁體中文
+[English](https://github.com/yidas/line-pay-sdk-php/blob/v3/README.md) | 繁體中文
 
 |SDK 版本|Online API 版本|Offline API 版本|
 |:-:|:-:|:-:|
-|v2 (目前版本)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline)|
+|v3 (目前版本)|[v3](https://pay.line.me/tw/developers/apis/onlineApis)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
+|[v2](https://github.com/yidas/line-pay-sdk-php/tree/v2)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 
 OUTLINE
 -------
@@ -38,9 +39,10 @@ OUTLINE
             - [getPayInfo()](#getpayinfo)
     - [Online APIs](#online-apis)
         - [取得查看付款紀錄 API](#取得查看付款紀錄-api)
-        - [付款reserve API](#付款reserve-api)
+        - [付款request API](#付款request-api)
         - [付款confirm API](#付款confirm-api)
         - [退款 API](#退款-api)
+        - [Check Payment Status API](#check-payment-status-api)
         - [取得查看授權記錄 API](#取得查看授權記錄-api)
         - [請款 API](#請款-api)
         - [授權作廢 API](#授權作廢-api)
@@ -62,7 +64,7 @@ OUTLINE
 示範
 ---
 
-[範例站台程式碼 (Reserve, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
+[範例站台程式碼 (Request, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
 
 ```php
 // Create LINE Pay client
@@ -72,18 +74,33 @@ $linePay = new \yidas\linePay\Client([
     'isSandbox' => true, 
 ]);
 
-// Online Reserve API
-$response = $linePay->reserve([
-    'productName' => 'Your product name',
+// Online Request API
+$response = $linePay->request([
     'amount' => 250,
     'currency' => 'TWD',
-    'confirmUrl' => 'https://yourname.com/line-pay/confirm',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'cancelUrl' => 'https://yourname.com/line-pay/cancel',
     'orderId' => 'Your order ID',
+    'packages' => [
+        [
+            'id' => 'Your package ID',
+            'amount' => 250,
+            'name' => 'Your package name',
+            'products' => [
+                [
+                    'name' => 'Your product name',
+                    'quantity' => 1,
+                    'price' => 250,
+                    'imageUrl' => 'https://yourname.com/assets/img/product.png',
+                ],
+            ],
+        ],
+    ],
+    'redirectUrls' => [
+        'confirmUrl' => 'https://yourname.com/line-pay/confirm',
+        'cancelUrl' => 'https://yourname.com/line-pay/cancel',
+    ],
 ]);
 
-// Check Reserve API result (returnCode "0000" check method)
+// Check Request API result (returnCode "0000" check method)
 if (!$response->isSuccessful()) {
     throw new Exception("ErrorCode {$response['returnCode']}: {$response['returnMessage']}");
 }
@@ -113,7 +130,7 @@ header('Location: '. $response->getPaymentUrl() );
 
  1. 申請 LINE Pay 商家帳號並通過審核，可以參考 [LINE Pay 商家中心](http://pay.line.me)。
  2. 使用商家帳戶登入 [LINE Pay 商家後台](http://pay.line.me/)，**取得ChannelId/ChannelSecret** (管理付款連結 > 管理連結金鑰)。
- 3. 於 [LINE Pay 商家後台](http://pay.line.me/)**設定伺服器IP白名單** (管理付款連結 > 管理付款伺服器 IP)。
+ 3. 於 [LINE Pay 商家後台](http://pay.line.me/)**設定伺服器IP白名單** (管理付款連結 > 管理付款伺服器 IP) *(v3版本非必要)*。
 
 > 您也可以馬上建立一個Sandbox商家帳號做測試，請參考 [LINE Pay - 建立Sandbox](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=zh_TW)。
 
@@ -226,9 +243,12 @@ if (!$response->isSuccessful()) {
 
 ### Online APIs
 
-線上整合中，商家會 Reserve 一個付款請求並產生付款 URL(QR code) 提供給消費者用 LINE App 掃描。
+線上整合中，商家會 Request 一個付款請求並產生付款 URL(QR code) 提供給消費者用 LINE App 掃描。
 
-> 流程: [`付款Reserve`](#付款reserve-api) -> [`付款Confirm`](#付款confirm-api) -> [`取得查看付款紀錄`](#取得查看付款紀錄-api) -> [`退款`](#退款-api)
+> 流程: [`付款Request`](#付款request-api) -> [`付款Confirm`](#付款confirm-api) -> [`取得查看付款紀錄`](#取得查看付款紀錄-api) -> [`退款`](#退款-api)
+
+![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete.png)
+![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete.png)
 
 #### 取得查看付款紀錄 API
 
@@ -245,30 +265,47 @@ $response = $linePay->details([
 ]);
 ```
 
-#### 付款reserve API
+#### 付款request API
 
-在 LINE Pay 中保留付款資訊。 在使用 LINE Pay 付款前確認是否為正常的商家，然後保留付款所需的資訊。成功付款 reserve 後，商家會收到一個「交易編號」，這個鍵值會在付款完成或退款時使用。
+在 LINE Pay 中保留付款資訊。 在使用 LINE Pay 付款前確認是否為正常的商家，然後保留付款所需的資訊。成功付款 request 後，商家會收到一個「交易編號」，這個鍵值會在付款完成或退款時使用。
 
 ```php
-public Response reserve(array $optParams=null)
+public Response request(array $optParams=null)
 ```
 
 *Example:*
 ```php 
-$response = $linePay->reserve([
-    'productName' => 'Your product name',
+$response = $linePay->request([
     'amount' => 250,
     'currency' => 'TWD',
-    'confirmUrl' => 'https://yourname.com/line-pay/confirm',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'cancelUrl' => 'https://yourname.com/line-pay/cancel',
     'orderId' => 'Your order ID',
+    'packages' => [
+        [
+            'id' => 'Your package ID',
+            'amount' => 250,
+            'name' => 'Your package name',
+            'products' => [
+                [
+                    'name' => 'Your product name',
+                    'quantity' => 1,
+                    'price' => 250,
+                    'imageUrl' => 'https://yourname.com/assets/img/product.png',
+                ],
+            ],
+        ],
+    ],
+    'redirectUrls' => [
+        'confirmUrl' => 'https://yourname.com/line-pay/confirm',
+        'cancelUrl' => 'https://yourname.com/line-pay/cancel',
+    ],
 ]);
 ```
 
+> `$optParams`參數規格可以參考 [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
+
 #### 付款confirm API
 
-此 API 可讓商家完成付款。商家必須呼叫付款 confirm API，才能實際完成付款。不過，當付款 reserve 的 "capture" 參數為 "false" 時，付款狀態會變為 "AUTHORIZATION"，只有在呼叫 "請款 API" 後才能完成付款。
+此 API 可讓商家完成付款。商家必須呼叫付款 confirm API，才能實際完成付款。不過，當付款 request 的 "capture" 參數為 "false" 時，付款狀態會變為 "AUTHORIZATION"，只有在呼叫 "請款 API" 後才能完成付款。
 
 ```php
 public Response confirm(integer $transactionId, array $optParams=null)
@@ -302,6 +339,19 @@ $response = $linePay->refund($transactionId, [
 ]);
 ```
 
+#### Check Payment Status API
+
+此API查詢LINE Pay付款請求狀態。不經過**confirmUrl**，商加隔一段時間直接檢查付款狀態，查看用戶是否確認付款，最終判斷付款流程是否完成。
+
+```php
+public Response check(integer $transactionId)
+```
+
+*Example:*
+```php
+$response = $linePay->check($transactionId);
+```
+
 #### 取得查看授權記錄 API
 
 取得透過 LINE Pay 授權項目的詳細說明。此 API 只會取得已經授權或授權已經作廢的資料；已經請款的項目則可使用「[取得查看付款紀錄 API](取得查看付款紀錄-api)」來檢視。
@@ -319,7 +369,7 @@ $response = $linePay->authorizations([
 
 #### 請款 API
 
-如果商家呼叫付款 reserve API 時 "capture" 為 "false"，則只有呼叫請款 API 後才能完成付款。 confirm API 執行結果只有授權的付款進行請款動作。
+如果商家呼叫付款 request API 時 "capture" 為 "false"，則只有呼叫請款 API 後才能完成付款。 confirm API 執行結果只有授權的付款進行請款動作。
 
 ```php
 public Response authorizationsCapture(integer $transactionId, array $optParams=null)
@@ -348,7 +398,7 @@ $response = $linePay->authorizationsVoid($transactionId);
 
 #### 自動付款 API
 
-當付款 reserve API 的付款類型設定為 `PREAPPROVED` 時，regKey 會隨付款結果傳回。自動付款 API 會使用 regKey 直接完成付款，無需使用 LINE 應用程式。
+當付款 request API 的付款類型設定為 `PREAPPROVED` 時，regKey 會隨付款結果傳回。自動付款 API 會使用 regKey 直接完成付款，無需使用 LINE 應用程式。
 
 ```php
 public Response preapproved(integer $regKey, array $optParams=null)
@@ -487,19 +537,19 @@ $response = $linePay->authorizations([
 外部資源
 =========
 
-**[LINE Pay Online API v2 指南 (EN)](https://pay.line.me/documents/online_v2_en.html)**
+**[LINE Pay Online API v3 整合指南 (TW)](https://pay.line.me/tw/developers/apis/onlineApis?locale=zh_TW)**
 
-**[LINE Pay Offline API v2 指南 (TW)](https://pay.line.me/tw/developers/apis/documentOffline?locale=zh_TW)**
-
-[LINE Pay 整合指南 PDF v1.1.2 (TW)](https://pay.line.me/file/guidebook/technicallinking/LINE_Pay_Integration_Guide_for_Merchant-v1.1.2-TW(1).pdf)
+**[LINE Pay Offline API v2 整合指南 (TW)](https://pay.line.me/tw/developers/apis/documentOffline?locale=zh_TW)**
 
 [LINE Pay Sandbox 商家帳號建立申請](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=zh_TW)
 
 [LINE Pay OneTimeKeys 產生器 (台灣商家使用)](https://sandbox-web-pay.line.me/web/sandbox/payment/oneTimeKey?countryCode=TW&paymentMethod=card&preset=1)
+
+[LINE Pay Online API v2 技術文件 PDF版本下載 (多國語言)](https://pay.line.me/tw/developers/documentation/download/tech?locale=zh_TW)
 
 ---
 
 參考
 ==========
 
-[LINE Pay - 技術文件](https://pay.line.me/tw/developers/documentation/download/tech?locale=zh_TW)
+[LINE Pay Developers - APIs](https://pay.line.me/tw/developers/apis/apis?locale=zh_TW)

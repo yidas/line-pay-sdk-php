@@ -35,7 +35,7 @@ if (!$response->isSuccessful()) {
     $_SESSION['linePayOrder']['confirmMessage'] = $response['returnMessage'];
 }
 
-// Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
+// Use Details API to confirm the transaction (Details API verification is more stable then Confirm API)
 $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
@@ -43,7 +43,7 @@ $response = $linePay->details([
 // Check the transaction
 if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
     $_SESSION['linePayOrder']['isSuccessful'] = false;
-    die("<script>alert('Refund Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
+    die("<script>alert('Details Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
 }
 
 // Code for saving the successful order into your application database...

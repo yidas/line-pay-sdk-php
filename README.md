@@ -11,11 +11,12 @@ LINE Pay SDK for PHP
 [![Latest Stable Version](https://poser.pugx.org/yidas/line-pay-sdk/v/stable?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 [![License](https://poser.pugx.org/yidas/line-pay-sdk/license?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 
-English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/master/README-zh_TW.md)
+English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/v3/README-zh_TW.md)
 
 |SDK Version|Online API Version|Offline API Version|
 |:-:|:-:|:-:|
-|v2 (Current)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
+|v3 (Current)|[v3](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
+|[v2](https://github.com/yidas/line-pay-sdk-php/tree/v2)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 
 OUTLINE
 -------
@@ -37,16 +38,17 @@ OUTLINE
             - [toObject()](#toobject)
             - [getPayInfo()](#getpayinfo)
     - [Online APIs](#online-apis)
-        - [Get Payment Details API](#get-payment-details-api)
-        - [Reserve Payment API](#reserve-payment-api)
-        - [Payment Confirm API](#payment-confirm-api)
-        - [Refund Payment API](#refund-payment-api)
+        - [Payment Details API](#payment-details-api)
+        - [Request API](#request-api)
+        - [Confirm API](#confirm-api)
+        - [Refund API](#refund-api)
+        - [Check Payment Status API](#check-payment-status-api)
         - [Get Authorization Details API](#get-authorization-details-api)
         - [Capture API](#capture-api)
         - [Void Authorization API](#void-authorization-api)
-        - [Preapproved Payment API](#preapproved-payment-api)
-        - [Check regKey Status API](#check-regkey-status-api)
-        - [Expire regKey API](#expire-regkey-api)
+        - [Pay Preapproved API](#pay-preapproved-api)
+        - [Check RegKey API](#check-regkey-api)
+        - [Expire RegKey API](#expire-regkey-api)
     - [Offline APIs](#offline-apis)
         - [Payment](#payment)
         - [Payment Status Check](#payment-status-check)
@@ -62,7 +64,7 @@ OUTLINE
 DEMONSTRATION
 -------------
 
-[Sample Codes Site for LINE Pay (Reserve, Confirm, Refund)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
+[Sample Codes Site for LINE Pay (Request, Confirm, Refund)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
 
 ```php
 // Create LINE Pay client
@@ -72,18 +74,33 @@ $linePay = new \yidas\linePay\Client([
     'isSandbox' => true, 
 ]);
 
-// Online Reserve API
-$response = $linePay->reserve([
-    'productName' => 'Your product name',
+// Online Request API
+$response = $linePay->request([
     'amount' => 250,
     'currency' => 'TWD',
-    'confirmUrl' => 'https://yourname.com/line-pay/confirm',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'cancelUrl' => 'https://yourname.com/line-pay/cancel',
     'orderId' => 'Your order ID',
+    'packages' => [
+        [
+            'id' => 'Your package ID',
+            'amount' => 250,
+            'name' => 'Your package name',
+            'products' => [
+                [
+                    'name' => 'Your product name',
+                    'quantity' => 1,
+                    'price' => 250,
+                    'imageUrl' => 'https://yourname.com/assets/img/product.png',
+                ],
+            ],
+        ],
+    ],
+    'redirectUrls' => [
+        'confirmUrl' => 'https://yourname.com/line-pay/confirm',
+        'cancelUrl' => 'https://yourname.com/line-pay/cancel',
+    ],
 ]);
 
-// Check Reserve API result (returnCode "0000" check method)
+// Check Request API result (returnCode "0000" check method)
 if (!$response->isSuccessful()) {
     throw new Exception("ErrorCode {$response['returnCode']}: {$response['returnMessage']}");
 }
@@ -114,7 +131,7 @@ To get an LINE Pay Authentication:
  1. Merchant's verification information can be viewed at [LINE Pay Merchant Center](http://pay.line.me) after evaluation process is
 complete.
  2. Login into [LINE Pay Merchant Center](http://pay.line.me), then **get the ChannelId/ChannelSecret** (Payment Integration Management > Manage Link Key).
- 3. In [LINE Pay Merchant Center](http://pay.line.me), **set IP white list** for your servers (Payment Integration Management > Manage Payment Server IP).
+ 3. In [LINE Pay Merchant Center](http://pay.line.me), **set IP white list** for your servers (Payment Integration Management > Manage Payment Server IP) *(v3 is not required)*.
 
 > You can immediately create a sandbox merchant account for test through [LINE Pay Sandbox Creation](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=en_US).
 
@@ -228,11 +245,14 @@ Get LINE Pay response body as object
 
 ### Online APIs
 
-For Web integration. Merchant will reserves a payment and generates payment URL(QR code) to customer to scan by LINE App.
+For Web integration. Merchant will requests a payment and generates payment URL(QR code) to customer to scan by LINE App.
 
-> Flow: [`Reserve`](#reserve-payment-api) -> [`Confirm`](#payment-confirm-api) -> [`Details`](#get-payment-details-api) -> [`Refund`](#refund-payment-api)
+> Flow: [`Request`](#request-api) -> [`Confirm`](#confirm-api) -> [`Details`](#payment-details-api) -> [`Refund`](#refund-api)
 
-#### Get Payment Details API
+![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete.png)
+![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete.png)
+
+#### Payment Details API
 
 Gets the details of payments made with LINE Pay. This API only gets the payments that have been captured.
 
@@ -247,29 +267,46 @@ $response = $linePay->details([
 ]);
 ```
 
-#### Reserve Payment API
+#### Request API
 
-Prior to processing payments with LINE Pay, the Merchant is evaluated if it is a normal Merchant store then the information is reserved for payment. 
-When a payment is successfully reserved, the Merchant gets a "transactionId" that is a key value used until the payment is completed or refunded.
+Prior to processing payments with LINE Pay, the Merchant is evaluated if it is a normal Merchant store then the information is requested for payment. 
+When a payment is successfully requested, the Merchant gets a "transactionId" that is a key value used until the payment is completed or refunded.
 
 ```php
-public Response reserve(array $optParams=null)
+public Response request(array $optParams=null)
 ```
 
 *Example:*
 ```php 
-$response = $linePay->reserve([
-    'productName' => 'Your product name',
+$response = $linePay->request([
     'amount' => 250,
     'currency' => 'TWD',
-    'confirmUrl' => 'https://yourname.com/line-pay/confirm',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'cancelUrl' => 'https://yourname.com/line-pay/cancel',
     'orderId' => 'Your order ID',
+    'packages' => [
+        [
+            'id' => 'Your package ID',
+            'amount' => 250,
+            'name' => 'Your package name',
+            'products' => [
+                [
+                    'name' => 'Your product name',
+                    'quantity' => 1,
+                    'price' => 250,
+                    'imageUrl' => 'https://yourname.com/assets/img/product.png',
+                ],
+            ],
+        ],
+    ],
+    'redirectUrls' => [
+        'confirmUrl' => 'https://yourname.com/line-pay/confirm',
+        'cancelUrl' => 'https://yourname.com/line-pay/cancel',
+    ],
 ]);
 ```
 
-#### Payment Confirm API
+> The `$optParams` specification can be referred to [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
+
+#### Confirm API
 
 This API is used for a Merchant to complete its payment. The Merchant must call Confirm Payment API to actually complete the payment. 
 However, when "capture" parameter is "false" on payment reservation, the payment status becomes AUTHORIZATION, and the payment is completed only after "Capture API" is called.
@@ -286,7 +323,7 @@ $response = $linePay->confirm($transactionId, [
 ]);
 ```
 
-#### Refund Payment API
+#### Refund API
 
 Requests refund of payments made with LINE Pay. 
 To refund a payment, the LINE Pay user's payment transactionId must be forwarded. A partial refund is also possible depending on the refund amount.
@@ -307,9 +344,22 @@ $response = $linePay->refund($transactionId, [
 ]);
 ```
 
+#### Check Payment Status API
+
+An API to check payment request status of LINE Pay. The merchant should regularly check user payment confirm status **without using the ConfirmURL** and decide if it is possible to complete the payment.
+
+```php
+public Response check(integer $transactionId)
+```
+
+*Example:*
+```php
+$response = $linePay->check($transactionId);
+```
+
 #### Get Authorization Details API
 
-Gets the details authorized with LINE Pay. This API only gets data that is authorized or whose authorization is voided; the one that is already captured can be viewed by using "Get Payment Details API”. 
+Gets the details authorized with LINE Pay. This API only gets data that is authorized or whose authorization is voided; the one that is already captured can be viewed by using "Payment Details API”. 
 
 ```php
 public Response authorizations(array $queryParams=null)
@@ -324,7 +374,7 @@ $response = $linePay->authorizations([
 
 #### Capture API
 
-If "capture" is "false" when the Merchant calls the “Reserve Payment API” , the payment is completed only after the Capture API is called.
+If "capture" is "false" when the Merchant calls the “Request API” , the payment is completed only after the Capture API is called.
 
 ```php
 public Response authorizationsCapture(integer $transactionId, array $optParams=null)
@@ -340,7 +390,7 @@ $response = $linePay->authorizationsCapture($transactionId, [
 
 #### Void Authorization API
 
-Voids a previously authorized payment. A payment that has been already captured can be refunded by using the “Refund Payment API”.
+Voids a previously authorized payment. A payment that has been already captured can be refunded by using the “Refund API”.
 
 ```php
 public Response authorizationsVoid(integer $transactionId, array $optParams=null)
@@ -351,10 +401,10 @@ public Response authorizationsVoid(integer $transactionId, array $optParams=null
 $response = $linePay->authorizationsVoid($transactionId);
 ```
 
-#### Preapproved Payment API
+#### Pay Preapproved API
 
-When the payment type of the Reserve Payment API was set as PREAPPROVED, a regKey is returned with the payment result. 
-Preapproved Payment API uses this regKey to directly complete a payment without using the LINE app.
+When the payment type of the Request API was set as PREAPPROVED, a regKey is returned with the payment result. 
+Pay Preapproved API uses this regKey to directly complete a payment without using the LINE app.
 
 ```php
 public Response preapproved(integer $regKey, array $optParams=null)
@@ -370,7 +420,7 @@ $response = $linePay->preapproved([
 ]);
 ```
 
-#### Check regKey Status API
+#### Check RegKey API
 
 Checks if regKey is available before using the preapproved payment API.
 
@@ -383,7 +433,7 @@ public Response preapprovedCheck(integer $regKey, array $queryParams=null)
 $response = $linePay->preapprovedCheck($regKey);
 ```
 
-#### Expire regKey API
+#### Expire RegKey API
 
 Expires the regKey information registered for preapproved payment. Once the API is called, the regKey is no longer used for preapproved payments.
 
@@ -494,11 +544,9 @@ $response = $linePay->authorizations([
 RESOURCES
 =========
 
-**[LINE Pay Online API v2 Guide (EN)](https://pay.line.me/documents/online_v2_en.html)**
+**[LINE Pay Online API v3 Guide (EN)](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)**
 
 **[LINE Pay Offline API v2 Guide (EN)](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)**
-
-[LINE Pay Integration Guide PDF v1.1.2 (EN)](https://pay.line.me/file/guidebook/technicallinking/LINE_Pay_Integration_Guide_for_Merchant-v1.1.2-EN.pdf)
 
 [LINE Pay Sandbox creation](https://pay.line.me/tw/developers/techsupport/sandbox/creation?locale=en_US)
 
@@ -506,9 +554,11 @@ RESOURCES
 
 [LINE Pay OneTimeKeys Simulation (For TW Merchant)](https://sandbox-web-pay.line.me/web/sandbox/payment/oneTimeKey?countryCode=TW&paymentMethod=card&preset=1)
 
+[LINE Pay Online API v2 Documents PDF version (Multi-language)](https://pay.line.me/tw/developers/documentation/download/tech?locale=en_US)
+
 ---
 
 REFERENCES
 ==========
 
-[LINE Pay Documentation](https://pay.line.me/tw/developers/documentation/download/tech?locale=en_US)
+[LINE Pay Developers - APIs](https://pay.line.me/tw/developers/apis/apis?locale=en_US)
