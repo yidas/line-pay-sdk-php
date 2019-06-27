@@ -11,7 +11,7 @@ LINE Pay SDK for PHP
 [![Latest Stable Version](https://poser.pugx.org/yidas/line-pay-sdk/v/stable?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 [![License](https://poser.pugx.org/yidas/line-pay-sdk/license?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 
-English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/master/README-zh_TW.md)
+English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/v2/README-zh_TW.md)
 
 |SDK Version|Online API Version|Offline API Version|
 |:-:|:-:|:-:|
