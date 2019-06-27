@@ -13,10 +13,9 @@ LINE Pay SDK for PHP
 
 English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/master/README-zh_TW.md)
 
-|LINE Pay API Type|API Version|
-|:-:|:-:|
-|Online API|v2|
-|Offline API|v2|
+|SDK Version|Online API Version|Offline API Version|
+|:-:|:-:|:-:|
+|v2 (Current)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 
 OUTLINE
 -------
