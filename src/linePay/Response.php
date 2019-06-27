@@ -6,7 +6,7 @@ namespace yidas\linePay;
  * LINE Pay Response
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @since   1.0.0
+ * @since   2.0.0
  */
 class Response implements \ArrayAccess
 {
