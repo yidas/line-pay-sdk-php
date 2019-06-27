@@ -429,7 +429,7 @@ It's the API used when the final payment status can't be checked due to read tim
 - Payment valid time is maximum 20 minutes and it's calculated from the Payment API Response time. Therefore, a merchant should check the payment status for maximum 20 minutes. In case 20 minutes are exceeded, that transaction will be the payment that couldn't be completed due to exceeded valid time.
 
 ```php
-public Response ordersCheck(string $orderId, array $$queryParams=null)
+public Response ordersCheck(string $orderId, array $queryParams=null)
 ```
 
 *Example:*
