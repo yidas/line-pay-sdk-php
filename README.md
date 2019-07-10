@@ -15,6 +15,7 @@ English | [繁體中文](https://github.com/yidas/line-pay-sdk-php/blob/v2/READM
 
 |SDK Version|Online API Version|Offline API Version|
 |:-:|:-:|:-:|
+|[v2](https://github.com/yidas/line-pay-sdk-php/tree/v2)|[v3](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 |v2 (Current)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 
 OUTLINE
