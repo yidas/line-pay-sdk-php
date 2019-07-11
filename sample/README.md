@@ -31,6 +31,30 @@ FLOW
 
 Payment flow: [Reserve](https://github.com/yidas/line-pay-sdk-php#reserve-payment-api) -> [Confirm](https://github.com/yidas/line-pay-sdk-php#payment-confirm-api) / [Details](https://github.com/yidas/line-pay-sdk-php#get-payment-details-api) -> [Refund](https://github.com/yidas/line-pay-sdk-php#refund-payment-api)
 
+---
+
+MERCHANTS SETTING
+-----------------
+
+You can save your favorite or test LINE Pay merchant account for display and selection on the sample page.
+
+To enable the setting, create `sample/_merchants.json` file (Under `sample` folder) using the following JSON format:
+
+```json
+[
+    {
+        "title": "First Merchant",
+        "channelId": "{your channelId}",
+        "channelSecret": "{your channelSecret}"
+    },
+    {
+        "title": "Second Merchant",
+        "channelId": "{your channelId}",
+        "channelSecret": "{your channelSecret}"
+    }
+]
+```
+
 
 
 

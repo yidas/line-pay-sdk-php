@@ -6,6 +6,12 @@ require __DIR__ . '/_config.php';
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]".dirname($_SERVER['PHP_SELF']);
 $input = $_POST;
 $input['isSandbox'] = (isset($input['isSandbox'])) ? true : false;
+// Merchant config option
+if (isset($input['merchant'])) {
+    $merchant = Merchant::getMerchant($input['merchant']);
+    $input['channelId'] = $merchant['channelId'];
+    $input['channelSecret'] = $merchant['channelSecret'];
+}
 
 // Create LINE Pay client
 $linePay = new \yidas\linePay\Client([

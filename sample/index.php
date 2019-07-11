@@ -22,6 +22,8 @@ switch ($route) {
 $order = isset($_SESSION['linePayOrder']) ? $_SESSION['linePayOrder'] : [];
 // Get last form data if exists
 $config = isset($_SESSION['config']) ? $_SESSION['config'] : [];
+// Get merchant list if exist
+$merchants = Merchant::getList();
 // Get log
 $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
 
@@ -112,13 +114,25 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
   <?php else: ?>
 
   <form method="POST" onsubmit="formSubmit(this);return;">
-    <div class="form-group">
-      <label for="inputChannelId">ChannelId</label>
-      <input type="text" class="form-control" id="inputChannelId" name="channelId" placeholder="Enter X-LINE-ChannelId" value="<?=isset($config['channelId']) ? $config['channelId'] : ''?>" required>
-    </div>
-    <div class="form-group">
-      <label for="inputChannelSecret">ChannelSecret</label>
-      <input type="text" class="form-control" id="inputChannelSecret" name="channelSecret" placeholder="Enter X-LINE-ChannelSecret" value="<?=isset($config['channelSecret']) ? $config['channelSecret'] : ''?>" required>
+    <?php if($merchants): ?>
+    <div class="merchant-block form-group" data-block-id="config" style="display: none;">
+      <label for="inputChannelId">Merchant (<a class="btn-merchant-switch" href="javascript:void(0);" data-block-id="config">Switch to Custom</a>)</label>
+      <select class="form-control" name="merchant" disabled>
+      <?php foreach($merchants as $key => $merchant): ?>
+        <option value="<?=$key?>" <?php if(isset($config['merchant']) && $config['merchant']==$key):?>selected<?php endif ?>><?=isset($merchant['title']) ? $merchant['title'] : "(Merchant - {$key})"?></option>
+      <?php endforeach ?>
+      </select>
+     </div>
+    <?php endif ?>
+    <div class="merchant-block" data-block-id="custom">
+      <div class="form-group">
+        <label for="inputChannelId">ChannelId <?php if($merchants): ?>(<a class="btn-merchant-switch" href="javascript:void(0);" data-block-id="custom">Switch to Config</a>)<?php endif ?></label>
+        <input type="text" class="form-control" id="inputChannelId" name="channelId" placeholder="Enter X-LINE-ChannelId" value="<?=(!isset($config['merchant']) && isset($config['channelId'])) ? $config['channelId'] : ''?>" required>
+      </div>
+      <div class="form-group">
+        <label for="inputChannelSecret">ChannelSecret</label>
+        <input type="text" class="form-control" id="inputChannelSecret" name="channelSecret" placeholder="Enter X-LINE-ChannelSecret" value="<?=(!isset($config['merchant']) && isset($config['channelSecret'])) ? $config['channelSecret'] : ''?>" required>
+      </div>
     </div>
     <div class="form-group">
       <label for="inputProductName">ProductName</label>
@@ -144,7 +158,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
       </div>
       <div class="col col-6 text-right">
-        <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Log</a>
+        <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Logs</a>
       </div>
     </div>
     <hr>
@@ -209,5 +223,37 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
 </div>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+
+  // Merchant config block
+  var elBlockConfig = document.querySelector(".merchant-block[data-block-id='config']");
+
+  // jQuery asset loading precaution (ensure that general functionality is available without jQuery)
+  if (typeof $ === 'undefined' && elBlockConfig) {
+    elBlockConfig.parentNode.removeChild(elBlockConfig);
+  }
+
+  // Merchant switch (jQuery required)
+  if (elBlockConfig) {
+
+    $(".btn-merchant-switch").click(function () {
+      var self = $(this).data("block-id");
+      var target = (self==="custom") ? 'config' : 'custom';
+      var $selfBlock = $(".merchant-block[data-block-id='" + self + "']");
+      var $targetBlock = $(".merchant-block[data-block-id='" + target + "']");
+      // Switch
+      $selfBlock.find("input, select").prop('disabled', true);
+      $selfBlock.hide(300, function () {
+        $targetBlock.find("input, select").prop('disabled', false);
+        $targetBlock.show(200);
+      });
+    });
+  }
+
+  <?php if($merchant && (!$config || isset($config['merchant']))): ?>
+  // Action for merchant config condition
+  $(".merchant-block[data-block-id='custom']").find(".btn-merchant-switch").click();
+  <?php endif ?>
+</script>
 </body>
 </html>

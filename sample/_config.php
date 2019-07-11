@@ -38,3 +38,48 @@ function saveLog($name, array $requestBody=null, $requestTime=null, array $respo
     ];
     $_SESSION['logs'] = $logs;
 }
+
+/**
+ * Merchant Helper
+ */
+class Merchant
+{
+    private static $configPath = __DIR__ . "/_merchants.json";
+
+    /**
+     * Get merchant list from config
+     *
+     * @return array
+     */
+    public static function getList()
+    {
+        if (file_exists(self::$configPath)) {
+        
+            $data = json_decode(file_get_contents(self::$configPath), true);
+
+            // Check format
+            foreach ($data as $key => $each) {
+                if (!isset($each['channelId']) || !isset($each['channelSecret'])) {
+                    die("<strong>ERROR:</strong> Incorrect merchant config format - Each merchant must include `channelId` and `channelSecret`.<br>\n (" . self::$configPath . ")");
+                }
+            }
+
+            return $data;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a merchant data by key
+     *
+     * @param string $key
+     * @return array
+     */
+    public static function getMerchant($key)
+    {
+        $merchants = self::getList();
+
+        return isset($merchants[$key]) ? $merchants[$key] : null;
+    }
+}
