@@ -142,7 +142,7 @@ INSTALLATION
 
 Run Composer in your project:
 
-    composer require yidas/line-pay-sdk
+    composer require yidas/line-pay-sdk ~3.0.0
     
 Then you could use SDK class after Composer is loaded on your PHP project:
 
