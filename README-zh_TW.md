@@ -125,7 +125,7 @@ header('Location: '. $response->getPaymentUrl() );
 
 在您的專案下執行 Composer 安裝:
 
-    composer require yidas/line-pay-sdk
+    composer require yidas/line-pay-sdk ~2.0.0
     
 安裝完成且載入 Composer 後，您即可使用 SDK Class 於您的 PHP 專案：
 
