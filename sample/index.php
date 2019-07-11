@@ -144,7 +144,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
       </div>
       <div class="col col-6 text-right">
-        <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Log</a>
+        <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Logs</a>
       </div>
     </div>
     <hr>
