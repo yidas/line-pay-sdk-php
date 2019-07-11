@@ -24,10 +24,14 @@ if ($order['transactionId'] != $transactionId) {
 }
 // var_dump($order);exit;
 // Online Confirm API
-$response = $linePay->confirm($order['transactionId'], [
+$bodyParams = [
     'amount' => (integer) $order['params']['amount'],
     'currency' => $order['params']['currency'],
-]);
+];
+$response = $linePay->confirm($order['transactionId'], $bodyParams);
+
+// Log
+saveLog('Confirm API', $bodyParams, null, $response->toArray(), null);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
@@ -39,6 +43,9 @@ if (!$response->isSuccessful()) {
 $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
+
+// Log
+saveLog('Payment Details API', [], null, $response->toArray(), null);
 
 // Check the transaction
 if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
