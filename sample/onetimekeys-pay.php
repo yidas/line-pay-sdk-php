@@ -28,6 +28,9 @@ $orderParams = [
 // Online Reserve API
 $response = $linePay->oneTimeKeysPay($orderParams);
 
+// Log
+saveLog('OneTimeKeysPay API', $orderParams, null, $response->toArray(), null, true);
+
 // Check Reserve API result
 if (!$response->isSuccessful()) {
     die("<script>alert('ErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
@@ -44,6 +47,9 @@ $_SESSION['config'] = $input;
 
 // Use Order Check API to confirm the transaction
 $response = $linePay->ordersCheck($orderId);
+
+// Log
+saveLog('Payment Status Check API', [], null, $response->toArray(), null);
 
 // Check the transaction
 if (!isset($response["info"]) || $response["info"]['orderId'] != $orderId) {

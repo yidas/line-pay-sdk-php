@@ -48,6 +48,9 @@ $orderParams = [
 // Online Reserve API
 $response = $linePay->reserve($orderParams);
 
+// Log
+saveLog('Request API', $orderParams, null, $response->toArray(), null, true);
+
 // Check Reserve API result
 if (!$response->isSuccessful()) {
     die("<script>alert('ErrorCode {$response['returnCode']}: " . addslashes($response['returnMessage']) . "');history.back();</script>");

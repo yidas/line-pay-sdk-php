@@ -25,6 +25,9 @@ $order = $_SESSION['linePayOrder'];
 // Check Payment Status API
 $response = $linePay->check($transactionId);
 
+// Log
+saveLog('Check Payment Status API', [], null, $response->toArray(), null);
+
 // Check result
 if (!$response->isSuccessful()) {
     die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');history.back();</script>");

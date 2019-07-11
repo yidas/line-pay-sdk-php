@@ -27,6 +27,9 @@ if ($order['transactionId'] != $transactionId) {
 $refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
 $response = $linePay->refund($order['transactionId'], $refundParams);
 
+// Log
+saveLog('Refund API', $refundParams, null, $response->toArray(), null);
+
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
     die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
@@ -36,6 +39,8 @@ if (!$response->isSuccessful()) {
 $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
+// Log
+saveLog('Payment Details API', [], null, $response->toArray(), null);
 // Check the transaction
 if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
     die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");
