@@ -39,22 +39,41 @@ if (!$response->isSuccessful()) {
     $_SESSION['linePayOrder']['confirmMessage'] = $response['returnMessage'];
 }
 
-// Use Details API to confirm the transaction (Details API verification is more stable then Confirm API)
-$response = $linePay->details([
-    'transactionId' => [$order['transactionId']],
-]);
+// Pre-approved 
+if (isset($config['preapproved'])) {
+    $regKey = isset($response['info']['regKey']) ? $response['info']['regKey'] : null;
+    if (!$regKey) {
+        die("<script>alert('`regKey` not found!;location.href='{$successUrl}';</script>");
+    }
+    $_SESSION['config']['regKey'] = $regKey;
+}
 
-// Log
-saveLog('Payment Details API', [], null, $response->toArray(), null);
+// Zero amount for Preapproved (Only Preapproved allows empty amount)
+if ($order['params']['amount']!=0) {
+    // Use Details API to confirm the transaction (Details API verification is more stable then Confirm API)
+    $response = $linePay->details([
+        'transactionId' => [$order['transactionId']],
+    ]);
 
-// Check the transaction
-if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
-    $_SESSION['linePayOrder']['isSuccessful'] = false;
-    die("<script>alert('Details Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
+    // Log
+    saveLog('Payment Details API', [], null, $response->toArray(), null);
+
+    // Save error info if confirm fails
+    if (!$response->isSuccessful()) {
+        $_SESSION['linePayOrder']['confirmCode'] = $response['returnCode'];
+        $_SESSION['linePayOrder']['confirmMessage'] = $response['returnMessage'];
+    }
+
+    // Check the transaction
+    if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
+        $_SESSION['linePayOrder']['isSuccessful'] = false;
+        die("<script>alert('Details Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
+    }
 }
 
 // Code for saving the successful order into your application database...
 $_SESSION['linePayOrder']['isSuccessful'] = true;
+$_SESSION['linePayOrder']['info'] = $response["info"][0];
 
 // Redirect to successful page
 header("Location: {$successUrl}");

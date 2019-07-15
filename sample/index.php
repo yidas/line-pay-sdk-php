@@ -53,7 +53,16 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
        * @param element form
        */
       function formSubmit(form) {
-        form.action = (form.otk.value) ? "onetimekeys-pay.php" : "request.php";
+        form.action = "request.php";
+        if (form.otk.value) {
+          form.action = "onetimekeys-pay.php";
+        }
+        else if (form.useRegKey.checked) {
+          form.action = "preapproved.php";
+        }
+        else if (form.transactionId.value) {
+          form.action = "details.php";
+        }
         form.form.submit();
         return;
       }
@@ -83,12 +92,27 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     <hr>
     <p>Environment: <?php if($order['isSandbox']):?>Sandbox<?php else:?>Real<?php endif ?></p>
     <?php endif ?>
-    <?php if(isset($order['refundList'])):?>
-      <?php foreach ($order['refundList'] as $key => $refund): ?>
+    <?php if(isset($order['info']['refundList'])):?>
       <hr>
+      <p><strong>Refund Info</strong></p>
+      <?php foreach ($order['info']['refundList'] as $key => $refund): ?>
       <p>RefundAmount: <?=$refund['refundAmount']?></p>
       <p>RefundTransactionDate: <?=$refund['refundTransactionDate']?></p>
       <?php endforeach ?>
+    <?php endif ?>
+    <?php if(isset($config['captureFalse'])):?>
+      <hr>
+      <p><strong>Capture Info</strong></p>
+      <p>Pay Status: <?=isset($order['info']['payStatus']) ? $order['info']['payStatus'] : ''?></p>
+      <p>
+        <a href="./capture.php?transactionId=<?=$order['transactionId']?>" class="btn btn-primary">Capture</a>
+        <a href="./void.php?transactionId=<?=$order['transactionId']?>" class="btn btn-danger">Void</a>
+      </p>
+    <?php endif ?>
+    <?php if(isset($config['preapproved'])):?>
+      <hr>
+      <p><strong>Preapproved Info</strong></p>
+      <p>regKey: <?=$config['regKey']?></p>
     <?php endif ?>
     <hr>
     <div class="clearfix">
@@ -151,14 +175,57 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
       <input type="text" class="form-control" id="inputOtk" name="otk" placeholder="LINE Pay My Code (Fill in to switch to Offline API)" value="">
     </div>
     <div class="row">
-      <div class="col col-6">
+      <div class="col col-4">
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="inputSandbox" name="isSandbox" <?=isset($config['isSandbox']) && !$config['isSandbox'] ? '' : 'checked'?>>
           <label class="form-check-label" for="inputSandbox">Sandbox</label>
         </div>
       </div>
-      <div class="col col-6 text-right">
+      <div class="col col-8 text-right">
+        <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMoreSettings">More Settings</a>
+        |
         <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Logs</a>
+      </div>
+    </div>
+    <div class="collapse" id="collapseMoreSettings">
+      <div class="card card-body">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputPreapproved" name="preapproved" <?=isset($config['preapproved']) ? 'checked' : ''?>>
+          <label class="form-check-label" for="inputPreapproved">PayType: <code>PREAPPROVED</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputUseRegKey" name="useRegKey">
+          <label class="form-check-label" for="inputUseRegKey">Pay Preapproved by <code>regKey</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
+          <input type="text" class="form-control form-control-sm" id="inputRegKey" name="regKey" placeholder="Preapproved regKey" value="<?=isset($config['regKey']) ? $config['regKey'] : ''?>">
+        </div>
+        <hr>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputCaptureFalse" name="captureFalse" <?=isset($config['captureFalse']) ? 'checked' : ''?>>
+          <label class="form-check-label" for="inputCaptureFalse">Capture: <code>false</code></label>
+        </div>
+        <hr>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" style="min-width: 115px;">DeviceProfileId</span>
+          </div>
+          <input type="text" name="merchantDeviceProfileId" class="form-control" pattern="[a-zA-Z0-9\s]+" placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric only)">
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text" style="min-width: 115px;">BranchName</span>
+          </div>
+          <input type="text" name="branchName" class="form-control" placeholder="options.extra.branchName">
+        </div>
+        <hr>
+        <div class="form-group">
+          <label>Search Transaction <font color="#cccccc"><i>(Refer by Custom merchant & Sandbox)</i></font></label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">Submit</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <hr>

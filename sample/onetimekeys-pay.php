@@ -2,8 +2,6 @@
 
 require __DIR__ . '/_config.php';
 
-// Get Base URL path without filename
-$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]".dirname($_SERVER['PHP_SELF']);
 $input = $_POST;
 $input['isSandbox'] = (isset($input['isSandbox'])) ? true : false;
 $input['otk'] = trim(str_replace(' ', '', $input['otk']));
@@ -19,6 +17,7 @@ $linePay = new \yidas\linePay\Client([
     'channelId' => $input['channelId'],
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
+    'merchantDeviceProfileId' => $input['merchantDeviceProfileId'],
 ]);
 
 // Create an order based on Reserve API parameters
@@ -30,6 +29,15 @@ $orderParams = [
 	'orderId' => $orderId,
 	'oneTimeKey' => $input['otk'],
 ];
+
+// Capture: false
+if (isset($input['captureFalse'])) {
+    $orderParams['capture'] = false;
+}
+// BrachName (Refund API doesn't support)
+if ($input['branchName']) {
+    $orderParams['extras']['branchName'] = $input['branchName'];
+}
 
 // Online Reserve API
 $response = $linePay->oneTimeKeysPay($orderParams);
@@ -65,6 +73,7 @@ if (!isset($response["info"]) || $response["info"]['orderId'] != $orderId) {
 
 // Code for saving the successful order into your application database...
 $_SESSION['linePayOrder']['isSuccessful'] = true;
+$_SESSION['linePayOrder']['info'] = $response["info"];
 
 // Redirect to LINE Pay payment URL 
 header("Location: ./index.php?route=order");

@@ -9,7 +9,6 @@ $linePay = new \yidas\linePay\Client([
     'channelId' => $config['channelId'],
     'channelSecret' => $config['channelSecret'],
     'isSandbox' => ($config['isSandbox']) ? true : false, 
-    'merchantDeviceProfileId' => $config['merchantDeviceProfileId'],
 ]);
 
 // Successful page URL
@@ -24,16 +23,15 @@ if ($order['transactionId'] != $transactionId) {
     die("<script>alert('TransactionId doesn\'t match');location.href='./index.php';</script>");
 }
 
-// Online Refund API
-$refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
-$response = $linePay->refund($order['transactionId'], $refundParams);
+// Online Void Authorization API
+$response = $linePay->authorizationsVoid($order['transactionId']);
 
 // Log
-saveLog('Refund API', $refundParams, null, $response->toArray(), null);
+saveLog('Void Authorization API', null, null, $response->toArray(), null);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
-    die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
+    die("<script>alert('Void Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
 }
 
 // Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
@@ -42,9 +40,10 @@ $response = $linePay->details([
 ]);
 // Log
 saveLog('Payment Details API', [], null, $response->toArray(), null);
+
 // Check the transaction
-if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
-    die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");
+if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
+    die("<script>alert('Details Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
 }
 
 // Code for saving the successful order into your application database...

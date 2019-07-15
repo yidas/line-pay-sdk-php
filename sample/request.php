@@ -18,6 +18,7 @@ $linePay = new \yidas\linePay\Client([
     'channelId' => $input['channelId'],
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
+    'merchantDeviceProfileId' => $input['merchantDeviceProfileId'],
 ]);
 
 // Create an order based on Reserve API parameters
@@ -35,7 +36,7 @@ $orderParams = [
                     "name" => $input['productName'],
                     "quantity" => 1,
                     "price" => (integer) $input['amount'],
-                    "imageUrl" => 'https://scdn.line-apps.com/linepay/partner/images/sp_txt_shape_v4_2.png',
+                    "imageUrl" => 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/220px-LINE_logo.svg.png',
                 ],
             ],
         ],
@@ -50,6 +51,19 @@ $orderParams = [
         ],
     ],
 ];
+
+// Capture: false
+if (isset($input['captureFalse'])) {
+    $orderParams['options']['payment']['capture'] = false;
+}
+// Preapproved
+if (isset($input['preapproved'])) {
+    $orderParams['options']['payment']['payType'] = 'PREAPPROVED';
+}
+// BrachName (Refund API doesn't support)
+if ($input['branchName']) {
+    $orderParams['options']['extra']['branchName'] = $input['branchName'];
+}
 
 // Online Reserve API
 $response = $linePay->reserve($orderParams);
