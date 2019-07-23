@@ -273,7 +273,7 @@ Prior to processing payments with LINE Pay, the Merchant is evaluated if it is a
 When a payment is successfully requested, the Merchant gets a "transactionId" that is a key value used until the payment is completed or refunded.
 
 ```php
-public Response request(array $optParams=null)
+public Response request(array $bodyParams=null)
 ```
 
 *Example:*
@@ -304,7 +304,7 @@ $response = $linePay->request([
 ]);
 ```
 
-> The `$optParams` specification can be referred to [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
+> The `$bodyParams` specification can be referred to [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
 
 #### Confirm API
 
@@ -312,7 +312,7 @@ This API is used for a Merchant to complete its payment. The Merchant must call 
 However, when "capture" parameter is "false" on payment reservation, the payment status becomes AUTHORIZATION, and the payment is completed only after "Capture API" is called.
 
 ```php
-public Response confirm(integer $transactionId, array $optParams=null)
+public Response confirm(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -329,7 +329,7 @@ Requests refund of payments made with LINE Pay.
 To refund a payment, the LINE Pay user's payment transactionId must be forwarded. A partial refund is also possible depending on the refund amount.
 
 ```php
-public Response refund(integer $transactionId, array $optParams=null)
+public Response refund(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -377,7 +377,7 @@ $response = $linePay->authorizations([
 If "capture" is "false" when the Merchant calls the “Request API” , the payment is completed only after the Capture API is called.
 
 ```php
-public Response authorizationsCapture(integer $transactionId, array $optParams=null)
+public Response authorizationsCapture(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -393,7 +393,7 @@ $response = $linePay->authorizationsCapture($transactionId, [
 Voids a previously authorized payment. A payment that has been already captured can be refunded by using the “Refund API”.
 
 ```php
-public Response authorizationsVoid(integer $transactionId, array $optParams=null)
+public Response authorizationsVoid(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -407,7 +407,7 @@ When the payment type of the Request API was set as PREAPPROVED, a regKey is ret
 Pay Preapproved API uses this regKey to directly complete a payment without using the LINE app.
 
 ```php
-public Response preapproved(integer $regKey, array $optParams=null)
+public Response preapproved(integer $regKey, array $bodyParams=null)
 ```
 
 *Example:*
@@ -438,7 +438,7 @@ $response = $linePay->preapprovedCheck($regKey);
 Expires the regKey information registered for preapproved payment. Once the API is called, the regKey is no longer used for preapproved payments.
 
 ```php
-public Response preapprovedExpire(integer $regKey, array $optParams=null)
+public Response preapprovedExpire(integer $regKey, array $bodyParams=null)
 ```
 
 *Example:*
@@ -457,7 +457,7 @@ For POS integration. Customer presents their barcode or QR code to merchants to 
 This API is to process payment by reading MyCode provided from LINE Pay App with Merchant's device.
 
 ```php
-public Response oneTimeKeysPay(array $optParams=null)
+public Response oneTimeKeysPay(array $bodyParams=null)
 ```
 
 *Example:*
@@ -492,7 +492,7 @@ $response = $linePay->ordersCheck($orderId);
 This API is to void the authorization.
 
 ```php
-public Response ordersVoid(string $orderId, array $optParams=null)
+public Response ordersVoid(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -505,7 +505,7 @@ $response = $linePay->ordersVoid($orderId);
 This API is to capture the authorized transaction.
 
 ```php
-public Response ordersCapture(string $orderId, array $optParams=null)
+public Response ordersCapture(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -518,7 +518,7 @@ $response = $linePay->ordersCapture($orderId);
 This API is to refund after the payment completion (Captured data).
 
 ```php
-public Response ordersRefund(string $orderId, array $optParams=null)
+public Response ordersRefund(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*

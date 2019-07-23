@@ -65,20 +65,20 @@ class Client
     /**
      * Constructor
      *
-     * @param string|array $bodyParams API Key or option parameters
+     * @param string|array $optParams API Key or option parameters
      *  'key' => Google API Key
      *  'clientID' => Google clientID
      *  'clientSecret' => Google clientSecret
      * @return self
      */
-    function __construct($bodyParams) 
+    function __construct($optParams) 
     {
         // Assignment
-        $channelId = isset($bodyParams['channelId']) ? $bodyParams['channelId'] : null;
-        $channelSecret = isset($bodyParams['channelSecret']) ? $bodyParams['channelSecret'] : null;
-        $merchantDeviceType = isset($bodyParams['merchantDeviceType']) ? $bodyParams['merchantDeviceType'] : null;
-        $merchantDeviceProfileId = isset($bodyParams['merchantDeviceProfileId']) ? $bodyParams['merchantDeviceProfileId'] : null;
-        $isSandbox = isset($bodyParams['isSandbox']) ? $bodyParams['isSandbox'] : false;
+        $channelId = isset($optParams['channelId']) ? $optParams['channelId'] : null;
+        $channelSecret = isset($optParams['channelSecret']) ? $optParams['channelSecret'] : null;
+        $merchantDeviceType = isset($optParams['merchantDeviceType']) ? $optParams['merchantDeviceType'] : null;
+        $merchantDeviceProfileId = isset($optParams['merchantDeviceProfileId']) ? $optParams['merchantDeviceProfileId'] : null;
+        $isSandbox = isset($optParams['isSandbox']) ? $optParams['isSandbox'] : false;
 
         // Check
         if (!$channelId || !$channelSecret) {

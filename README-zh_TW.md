@@ -270,7 +270,7 @@ $response = $linePay->details([
 在 LINE Pay 中保留付款資訊。 在使用 LINE Pay 付款前確認是否為正常的商家，然後保留付款所需的資訊。成功付款 request 後，商家會收到一個「交易編號」，這個鍵值會在付款完成或退款時使用。
 
 ```php
-public Response request(array $optParams=null)
+public Response request(array $bodyParams=null)
 ```
 
 *Example:*
@@ -301,14 +301,14 @@ $response = $linePay->request([
 ]);
 ```
 
-> `$optParams`參數規格可以參考 [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
+> `$bodyParams`參數規格可以參考 [Request API v3 Request Body](https://pay.line.me/documents/online_v3_en.html#request-api)
 
 #### 付款confirm API
 
 此 API 可讓商家完成付款。商家必須呼叫付款 confirm API，才能實際完成付款。不過，當付款 request 的 "capture" 參數為 "false" 時，付款狀態會變為 "AUTHORIZATION"，只有在呼叫 "請款 API" 後才能完成付款。
 
 ```php
-public Response confirm(integer $transactionId, array $optParams=null)
+public Response confirm(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -324,7 +324,7 @@ $response = $linePay->confirm($transactionId, [
 請求對 LINE Pay 付款完成的項目進行退款。退款時必須提供 LINE Pay 用戶的付款交易編號，也可以視退款金額進行部分退款。
 
 ```php
-public Response refund(integer $transactionId, array $optParams=null)
+public Response refund(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -372,7 +372,7 @@ $response = $linePay->authorizations([
 如果商家呼叫付款 request API 時 "capture" 為 "false"，則只有呼叫請款 API 後才能完成付款。 confirm API 執行結果只有授權的付款進行請款動作。
 
 ```php
-public Response authorizationsCapture(integer $transactionId, array $optParams=null)
+public Response authorizationsCapture(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -388,7 +388,7 @@ $response = $linePay->authorizationsCapture($transactionId, [
 將已授權的交易作廢。 將先前已授權的付款作廢。已經請款的付款可以藉由使用「退款 API」進行退款。
 
 ```php
-public Response authorizationsVoid(integer $transactionId, array $optParams=null)
+public Response authorizationsVoid(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -401,7 +401,7 @@ $response = $linePay->authorizationsVoid($transactionId);
 當付款 request API 的付款類型設定為 `PREAPPROVED` 時，regKey 會隨付款結果傳回。自動付款 API 會使用 regKey 直接完成付款，無需使用 LINE 應用程式。
 
 ```php
-public Response preapproved(integer $regKey, array $optParams=null)
+public Response preapproved(integer $regKey, array $bodyParams=null)
 ```
 
 *Example:*
@@ -432,7 +432,7 @@ $response = $linePay->preapprovedCheck($regKey);
 註銷為自動付款登錄的 regKey 資訊。一旦呼叫此 API，現有的 regKey 將無法繼續用於自動付款。
 
 ```php
-public Response preapprovedExpire(integer $regKey, array $optParams=null)
+public Response preapprovedExpire(integer $regKey, array $bodyParams=null)
 ```
 
 *Example:*
@@ -451,7 +451,7 @@ $response = $linePay->preapprovedExpire($regKey);
 此API為商店交易裝置讀取LINE Pay"我的條碼"後傳送付款要求所需的API。
 
 ```php
-public Response oneTimeKeysPay(array $optParams=null)
+public Response oneTimeKeysPay(array $bodyParams=null)
 ```
 
 *Example:*
@@ -487,7 +487,7 @@ $response = $linePay->ordersCheck($orderId);
 此API用於進行授權作廢
 
 ```php
-public Response ordersVoid(string $orderId, array $optParams=null)
+public Response ordersVoid(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -500,7 +500,7 @@ $response = $linePay->ordersVoid($orderId);
 此API用於對已取得授權的交易進行請款。
 
 ```php
-public Response ordersCapture(string $orderId, array $optParams=null)
+public Response ordersCapture(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*
@@ -513,7 +513,7 @@ $response = $linePay->ordersCapture($orderId);
 此API對付款完成的項目進行退款。
 
 ```php
-public Response ordersRefund(string $orderId, array $optParams=null)
+public Response ordersRefund(string $orderId, array $bodyParams=null)
 ```
 
 *Example:*
