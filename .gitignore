@@ -1,5 +1,5 @@
 /vendor
 composer.phar
 composer.lock
-# Sample optional config
-sample/_merchants.json
+# Tool's optional config
+/tool/_merchants.json

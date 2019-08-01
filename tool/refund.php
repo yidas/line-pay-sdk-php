@@ -9,6 +9,7 @@ $linePay = new \yidas\linePay\Client([
     'channelId' => $config['channelId'],
     'channelSecret' => $config['channelSecret'],
     'isSandbox' => ($config['isSandbox']) ? true : false, 
+    'merchantDeviceProfileId' => $config['merchantDeviceProfileId'],
 ]);
 
 // Successful page URL
@@ -22,32 +23,32 @@ $order = $_SESSION['linePayOrder'];
 if ($order['transactionId'] != $transactionId) {
     die("<script>alert('TransactionId doesn\'t match');location.href='./index.php';</script>");
 }
-// var_dump($order);exit;
-// Online Confirm API
-$response = $linePay->confirm($order['transactionId'], [
-    'amount' => (integer) $order['params']['amount'],
-    'currency' => $order['params']['currency'],
-]);
+
+// Online Refund API
+$refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
+$response = $linePay->refund($order['transactionId'], $refundParams);
+
+// Log
+saveLog('Refund API', $refundParams, null, $response->toArray(), null);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
-    $_SESSION['linePayOrder']['confirmCode'] = $response['returnCode'];
-    $_SESSION['linePayOrder']['confirmMessage'] = $response['returnMessage'];
+    die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
 }
 
 // Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
 $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
-
+// Log
+saveLog('Payment Details API', [], null, $response->toArray(), null);
 // Check the transaction
-if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
-    $_SESSION['linePayOrder']['isSuccessful'] = false;
-    die("<script>alert('Refund Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
+if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
+    die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");
 }
 
 // Code for saving the successful order into your application database...
-$_SESSION['linePayOrder']['isSuccessful'] = true;
+$_SESSION['linePayOrder']['info'] = $response["info"][0];
 
 // Redirect to successful page
 header("Location: {$successUrl}");

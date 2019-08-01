@@ -43,7 +43,6 @@ OUTLINE
         - [付款confirm API](#付款confirm-api)
         - [退款 API](#退款-api)
         - [Check Payment Status API](#check-payment-status-api)
-        - [取得查看授權記錄 API](#取得查看授權記錄-api)
         - [請款 API](#請款-api)
         - [授權作廢 API](#授權作廢-api)
         - [自動付款 API](#自動付款-api)
@@ -55,7 +54,7 @@ OUTLINE
         - [Void](#void)
         - [Capture](#capture)
         - [Refund](#refund)
-        - [Authorization Details](#authorization-details)
+        - [取得查看授權記錄 API](#取得查看授權記錄-api)
 - [外部資源](#外部資源)
 - [參考](#參考)
 
@@ -64,7 +63,7 @@ OUTLINE
 示範
 ---
 
-[範例站台程式碼 (Request, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
+[範例站台程式碼 (Request, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/v3/sample)
 
 ```php
 // Create LINE Pay client
@@ -108,6 +107,8 @@ if (!$response->isSuccessful()) {
 // Redirect to LINE Pay payment URL 
 header('Location: '. $response->getPaymentUrl() );
 ```
+
+> [LINE Pay API Tool for testing and loging APIs](https://github.com/yidas/line-pay-sdk-php/tree/v3/tool)
 
 ---
 
@@ -352,21 +353,6 @@ public Response check(integer $transactionId)
 $response = $linePay->check($transactionId);
 ```
 
-#### 取得查看授權記錄 API
-
-取得透過 LINE Pay 授權項目的詳細說明。此 API 只會取得已經授權或授權已經作廢的資料；已經請款的項目則可使用「[取得查看付款紀錄 API](取得查看付款紀錄-api)」來檢視。
-
-```php
-public Response authorizations(array $queryParams=null)
-```
-
-*Example:*
-```php
-$response = $linePay->authorizations([
-    "transactionId" => [$transactionId],
-]);
-```
-
 #### 請款 API
 
 如果商家呼叫付款 request API 時 "capture" 為 "false"，則只有呼叫請款 API 後才能完成付款。 confirm API 執行結果只有授權的付款進行請款動作。
@@ -521,11 +507,22 @@ public Response ordersRefund(string $orderId, array $bodyParams=null)
 $response = $linePay->ordersRefund($orderId);
 ```
 
-#### Authorization Details
+#### 取得查看授權記錄 API
 
 此API用於查看已取得付款授權交易的交易記錄。只有授權或取消授權 (作廢或是過期) 的交易記錄才可使用此API查詢，已經請款的交易紀錄則需使用「查看付款紀錄 API」來查詢。
 
-*Example:*
+```php
+public Response authorizations(array $queryParams=null)
+```
+
+*Example for searching transactionId:*
+```php
+$response = $linePay->authorizations([
+    "transactionId" => [$transactionId],
+]);
+```
+
+*Example for searching orderId:*
 ```php
 $response = $linePay->authorizations([
     "orderId" => $orderId,

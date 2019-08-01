@@ -10,7 +10,7 @@ use GuzzleHttp\Client as HttpClient;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.0.2
+ * @version 3.1.0
  */
 class Client
 {
@@ -35,7 +35,6 @@ class Client
         'refund' => '/v3/payments/{transactionId}/refund',
         'details' => '/v3/payments',
         'check' => '/v3/payments/requests/{transactionId}/check',
-        'authorizations' => '/v3/payments/authorizations',
         'authorizationsCapture' => '/v3/payments/authorizations/{transactionId}/capture',
         'authorizationsVoid' => '/v3/payments/authorizations/{transactionId}/void',
         'preapproved' => '/v3/payments/preapprovedPay/{regKey}/payment',
@@ -46,6 +45,7 @@ class Client
         'ordersVoid' => '/v2/payments/orders/{orderId}/void',
         'ordersCapture' => '/v2/payments/orders/{orderId}/capture',
         'ordersRefund' => '/v2/payments/orders/{orderId}/refund',
+        'authorizations' => '/v2/payments/authorizations',
     ];
 
     /**
@@ -122,12 +122,12 @@ class Client
      * @param string $uri
      * @param array $queryParams
      * @param array $bodyParams
+     * @param array $options
      * @return yidas\linePay\Response
      */
-    protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null)
+    protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
     {
         // Request options
-        $options = [];
         if ($queryParams) {
             $options['query'] = $queryParams;
         }
@@ -165,7 +165,10 @@ class Client
      */
     public function details($queryParams)
     {
-        return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams);
+        return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams, null, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -176,7 +179,10 @@ class Client
      */
     public function request($bodyParams)
     {
-        return $this->requestHandler('v3', 'POST', self::$apiUris['request'], null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', self::$apiUris['request'], null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -199,7 +205,10 @@ class Client
      */
     public function confirm($transactionId, $bodyParams)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['confirm']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['confirm']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 40,
+            ]);
     }
 
     /**
@@ -211,7 +220,10 @@ class Client
      */
     public function refund($transactionId, $bodyParams=null)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['refund']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['refund']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -222,18 +234,10 @@ class Client
      */
     public function check($transactionId)
     {
-        return $this->requestHandler('v3', 'GET', str_replace('{transactionId}', $transactionId, self::$apiUris['check']));
-    }
-
-    /**
-     * Get Authorization details
-     *
-     * @param array $queryParams
-     * @return yidas\linePay\Response
-     */
-    public function authorizations($queryParams)
-    {
-        return $this->requestHandler('v3', 'GET', self::$apiUris['authorizations'], $queryParams);
+        return $this->requestHandler('v3', 'GET', str_replace('{transactionId}', $transactionId, self::$apiUris['check']), null, null, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -245,7 +249,10 @@ class Client
      */
     public function authorizationsCapture($transactionId, $bodyParams)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsCapture']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsCapture']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 60,
+            ]);
     }
 
     /**
@@ -269,7 +276,10 @@ class Client
      */
     public function authorizationsVoid($transactionId, $bodyParams=null)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsVoid']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsVoid']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -293,7 +303,10 @@ class Client
      */
     public function preapproved($regKey, $bodyParams=null)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapproved']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapproved']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 40,
+            ]);
     }
 
     /**
@@ -305,7 +318,10 @@ class Client
      */
     public function preapprovedCheck($regKey, $queryParams=null)
     {
-        return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), $queryParams);
+        return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), $queryParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -317,7 +333,10 @@ class Client
      */
     public function preapprovedExpire($regKey, $bodyParams=null)
     {
-        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), null, $bodyParams);
+        return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -328,7 +347,10 @@ class Client
      */
     public function oneTimeKeysPay($bodyParams)
     {
-        return $this->requestHandler('v2', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams);
+        return $this->requestHandler('v2', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
     
     /**
@@ -340,7 +362,10 @@ class Client
      */
     public function ordersCheck($orderId, $queryParams=null)
     {
-        return $this->requestHandler('v2', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams);
+        return $this->requestHandler('v2', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams, null, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -352,7 +377,10 @@ class Client
      */
     public function ordersVoid($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -364,7 +392,10 @@ class Client
      */
     public function ordersCapture($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 
     /**
@@ -376,6 +407,23 @@ class Client
      */
     public function ordersRefund($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams);
+        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
+    }
+
+    /**
+     * Get Authorization details
+     *
+     * @param array $queryParams
+     * @return yidas\linePay\Response
+     */
+    public function authorizations($queryParams)
+    {
+        return $this->requestHandler('v2', 'GET', self::$apiUris['authorizations'], $queryParams, null, [
+            'connect_timeout' => 5,
+            'read_timeout' => 20,
+            ]);
     }
 }

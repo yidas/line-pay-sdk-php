@@ -43,9 +43,8 @@ OUTLINE
         - [Confirm API](#confirm-api)
         - [Refund API](#refund-api)
         - [Check Payment Status API](#check-payment-status-api)
-        - [Get Authorization Details API](#get-authorization-details-api)
         - [Capture API](#capture-api)
-        - [Void Authorization API](#void-authorization-api)
+        - [Void API](#void-api)
         - [Pay Preapproved API](#pay-preapproved-api)
         - [Check RegKey API](#check-regkey-api)
         - [Expire RegKey API](#expire-regkey-api)
@@ -64,7 +63,7 @@ OUTLINE
 DEMONSTRATION
 -------------
 
-[Sample Codes Site for LINE Pay (Request, Confirm, Refund)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
+[Sample Codes Site for LINE Pay (Request, Confirm, Refund)](https://github.com/yidas/line-pay-sdk-php/tree/v3/sample)
 
 ```php
 // Create LINE Pay client
@@ -108,6 +107,8 @@ if (!$response->isSuccessful()) {
 // Redirect to LINE Pay payment URL 
 header('Location: '. $response->getPaymentUrl() );
 ```
+
+> [LINE Pay API Tool for testing and loging APIs](https://github.com/yidas/line-pay-sdk-php/tree/v3/tool)
 
 ---
 
@@ -357,21 +358,6 @@ public Response check(integer $transactionId)
 $response = $linePay->check($transactionId);
 ```
 
-#### Get Authorization Details API
-
-Gets the details authorized with LINE Pay. This API only gets data that is authorized or whose authorization is voided; the one that is already captured can be viewed by using "Payment Details API”. 
-
-```php
-public Response authorizations(array $queryParams=null)
-```
-
-*Example:*
-```php
-$response = $linePay->authorizations([
-    "transactionId" => [$transactionId],
-]);
-```
-
 #### Capture API
 
 If "capture" is "false" when the Merchant calls the “Request API” , the payment is completed only after the Capture API is called.
@@ -388,7 +374,7 @@ $response = $linePay->authorizationsCapture($transactionId, [
 ]);
 ```
 
-#### Void Authorization API
+#### Void API
 
 Voids a previously authorized payment. A payment that has been already captured can be refunded by using the “Refund API”.
 
@@ -528,11 +514,21 @@ $response = $linePay->ordersRefund($orderId);
 
 #### Authorization Details
 
-Refer to [Online Get Authorization Details API](#get-authorization-details-api)
-
 This API is to search the authorization details. Only authorized or cancelled (Void or Expire) data can be searched and the data after capturing can be searched by The Payment Details API.
 
-*Example:*
+```php
+public Response authorizations(array $queryParams=null)
+```
+
+*Example for searching transactionId:*
+```php
+$response = $linePay->authorizations([
+    "transactionId" => [$transactionId],
+]);
+```
+
+*Example for searching orderId:*
+
 ```php
 $response = $linePay->authorizations([
     "orderId" => $orderId,
