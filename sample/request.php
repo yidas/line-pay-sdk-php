@@ -64,6 +64,8 @@ if (isset($input['preapproved'])) {
 if ($input['branchName']) {
     $orderParams['options']['extra']['branchName'] = $input['branchName'];
 }
+// PaymentUrl type
+$paymentUrlType = (isset($input['paymenUrlApp'])) ? 'app' : 'web';
 
 // Online Reserve API
 $response = $linePay->reserve($orderParams);
@@ -86,4 +88,4 @@ $_SESSION['linePayOrder'] = [
 $_SESSION['config'] = $input;
 
 // Redirect to LINE Pay payment URL 
-header('Location: '. $response->getPaymentUrl() );
+header('Location: '. $response->getPaymentUrl($paymentUrlType) );

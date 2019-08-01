@@ -216,6 +216,10 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           </div>
           <input type="text" name="branchName" class="form-control" placeholder="options.extra.branchName">
         </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputPaymentUrlApp" name="paymenUrlApp" <?=isset($config['paymenUrlApp']) ? 'checked' : ''?>>
+          <label class="form-check-label" for="inputPaymentUrlApp">paymentUrl: <code>app</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
+        </div>
         <hr>
         <div class="form-group">
           <label>Search Transaction <font color="#cccccc"><i>(Refer by Custom merchant & Sandbox)</i></font></label>
