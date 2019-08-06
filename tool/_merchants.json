@@ -1,0 +1,47 @@
+[
+    {
+        "title": "Original",
+        "channelId": "1572160280",
+        "channelSecret": "d2dddc5522fd390524e81b1483497a41"
+    },
+    {
+        "title": "Use Point",
+        "channelId": "1576239709",
+        "channelSecret": "2263992296cdb9c9724fdc2f573fef85"
+    },
+    {
+        "title": "No Capture",
+        "channelId": "1573263727",
+        "channelSecret": "73055277873e9c526c0111347a01f261"
+    },
+    {
+        "title": "iPass OTK",
+        "channelId": "1563192575",
+        "channelSecret": "8098b14e4f53f9c6a9cfc9fcb6aceb09"
+    },
+    {
+        "title": "JP Original",
+        "channelId": "1594217805",
+        "channelSecret": "1dfd4a1365c1c41527c732c412c55bc6"
+    },
+    {
+        "title": "TH Original",
+        "channelId": "1595154877",
+        "channelSecret": "8aab24e8ea5104888539787eb9044b8a"
+    },
+    {
+        "title": "[REAL] yidas",
+        "channelId": "1568838033",
+        "channelSecret": "fb3b51755c89b63ade8f37933fee277c"
+    },
+    {
+        "title": "[REAL] Otaku",
+        "channelId": "1631103753",
+        "channelSecret": "80216f41bb026275399cb31aab5e8499"
+    },
+    {
+        "title": "[REAL] LINE Pay tech",
+        "channelId": "1505021441",
+        "channelSecret": "35ea60b3289f343b9f5ea43f145962cd"
+    }
+]

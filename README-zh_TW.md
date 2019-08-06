@@ -64,7 +64,7 @@ OUTLINE
 示範
 ---
 
-[範例站台程式碼 (Request, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/master/sample)
+[範例站台程式碼 (Request, 付款, 退款)](https://github.com/yidas/line-pay-sdk-php/tree/v3/sample)
 
 ```php
 // Create LINE Pay client
@@ -108,6 +108,8 @@ if (!$response->isSuccessful()) {
 // Redirect to LINE Pay payment URL 
 header('Location: '. $response->getPaymentUrl() );
 ```
+
+> [LINE Pay API Tool for testing and loging APIs](https://github.com/yidas/line-pay-sdk-php/tree/v3/tool)
 
 ---
 

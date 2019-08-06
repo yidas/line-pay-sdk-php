@@ -6,12 +6,19 @@ require __DIR__ . '/_config.php';
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]".dirname($_SERVER['PHP_SELF']);
 $input = $_POST;
 $input['isSandbox'] = (isset($input['isSandbox'])) ? true : false;
+// Merchant config option
+if (isset($input['merchant'])) {
+    $merchant = Merchant::getMerchant($input['merchant']);
+    $input['channelId'] = $merchant['channelId'];
+    $input['channelSecret'] = $merchant['channelSecret'];
+}
 
 // Create LINE Pay client
 $linePay = new \yidas\linePay\Client([
     'channelId' => $input['channelId'],
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
+    'merchantDeviceProfileId' => $input['merchantDeviceProfileId'],
 ]);
 
 // Create an order based on Reserve API parameters
@@ -45,10 +52,28 @@ $orderParams = [
     ],
 ];
 
-// Online Reserve API
-$response = $linePay->request($orderParams);
+// Capture: false
+if (isset($input['captureFalse'])) {
+    $orderParams['options']['payment']['capture'] = false;
+}
+// Preapproved
+if (isset($input['preapproved'])) {
+    $orderParams['options']['payment']['payType'] = 'PREAPPROVED';
+}
+// BrachName (Refund API doesn't support)
+if ($input['branchName']) {
+    $orderParams['options']['extra']['branchName'] = $input['branchName'];
+}
+// PaymentUrl type
+$paymentUrlType = (isset($input['paymenUrlApp'])) ? 'app' : 'web';
 
-// Check Reserve API result
+// Online Reserve API
+$response = $linePay->reserve($orderParams);
+
+// Log
+saveLog('Request API', $orderParams, null, $response->toArray(), null, true);
+
+// Check Request API result
 if (!$response->isSuccessful()) {
     die("<script>alert('ErrorCode {$response['returnCode']}: " . addslashes($response['returnMessage']) . "');history.back();</script>");
 }
@@ -63,4 +88,4 @@ $_SESSION['linePayOrder'] = [
 $_SESSION['config'] = $input;
 
 // Redirect to LINE Pay payment URL 
-header('Location: '. $response->getPaymentUrl() );
+header('Location: '. $response->getPaymentUrl($paymentUrlType) );
