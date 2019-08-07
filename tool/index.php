@@ -35,7 +35,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/x-icon" class="js-site-favicon" href="https://github.githubassets.com/favicon.ico">
-    <title>Sample - yidas/line-pay-sdk-php</title>
+    <title>Tool - yidas/line-pay-sdk-php</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
       pre.log {
@@ -70,7 +70,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
 </head>
 <body>
 <div style="padding:30px 10px; max-width: 600px; margin: auto;">
-  <h3>LINE Pay API Sample</h3>
+  <h3>LINE Pay API Tool</h3>
 
   <?php if($route=='order'): ?>
   <?php $status = (!isset($order['isSuccessful'])) ? 'none' : (($order['isSuccessful']) ? 'successful' : 'failed') ?>
@@ -204,6 +204,11 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label class="form-check-label" for="inputCaptureFalse">Capture: <code>false</code></label>
         </div>
         <hr>
+        <div class="form-group">
+          <label>Custom orderId</label>
+          <input type="text" class="form-control" name="orderId" placeholder="Input orderId to overwrite">
+        </div>
+        <hr>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
             <span class="input-group-text" style="min-width: 115px;">DeviceProfileId</span>
@@ -222,7 +227,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
         <hr>
         <div class="form-group">
-          <label>Search Transaction <font color="#cccccc"><i>(Refer by Custom merchant & Sandbox)</i></font></label>
+          <label>Search Transaction <font color="#cccccc"><i>(Effective with Custom merchant & Sandbox setting)</i></font></label>
           <div class="input-group">
             <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
             <div class="input-group-append">

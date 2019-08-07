@@ -21,7 +21,7 @@ $linePay = new \yidas\linePay\Client([
 ]);
 
 // Create an order based on Reserve API parameters
-$orderId = "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3);
+$orderId = ($input['orderId']) ? $input['orderId'] : "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3);
 $orderParams = [
     'productName' => $input['productName'],
     'amount' => (integer) $input['amount'],
