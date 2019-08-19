@@ -16,13 +16,15 @@ $config = $_SESSION['config'];
 if (!$config) {
     die("<script>alert('Invalid session');location.href='./index.php';</script>");
 }
+// Input
+$transactionId = isset($_GET['transactionId']) ? $_GET['transactionId'] : null;
+$otks = isset($_GET['otk']) ? $_GET['otk'] : null;
 // Check input
-if (!isset($_GET['transactionId'])) {
-    die("<script>alert('No input');location.href='./index.php';</script>");
+if (!$transactionId && !$otks) {
+    die("<script>alert('No input (transactionId & otk)');location.href='./index.php';</script>");
 }
 // Get the order from session
 $order = $_SESSION['linePayOrder'];
-$transactionId = $_GET['transactionId'];
 
 // New a HTTP client
 $client = new Client([
@@ -33,33 +35,59 @@ $client = new Client([
     ]
 ]);
 
-// Body
-$bodyParams = [
-    'amount' => (integer) $order['params']['amount'],
-    'currency' => $order['params']['currency'],
-];
-$options['body'] = json_encode($bodyParams);
 // Promises list
 $promises = [];
 
-// Single transaction concurrency or multi-transactions to same orderId concurrency 
-if (is_array($transactionId)) {
+// Multi-OTK to same orderId concurrency 
+if ($otks) {
 
-    // All $transactionIds need same confirm API body (Currency & Price)
-    foreach ($transactionId as $key => $eachId) {
-        $uri = "/v3/payments/{$eachId}/confirm";
-        authToOptions($options, $uri, $config['channelSecret']);
+    // Create body
+    $bodyParams = [
+        'amount' => (integer) $order['params']['amount'],
+        'currency' => $order['params']['currency'],
+        "productName" => isset($order['params']['productName']) ? $order['params']['productName'] : $order['params']['packages'][0]['products'][0]['name'],
+        "orderId" => $order['params']['orderId'],
+    ];
+    
+    // Each OTK with same info
+    foreach ((array) $otks as $key => $otk) {
+        $uri = "v2/payments/oneTimeKeys/pay";
+        // Overwrite options
+        $bodyParams["oneTimeKey"] = $otk;
+        $options['body'] = json_encode($bodyParams);
+        $options['headers']['X-LINE-ChannelSecret'] =  $config['channelSecret'];
         $promises[] = $client->requestAsync('POST', $uri, $options);
     }
-
 } else {
 
-    for ($i=0; $i < 3; $i++) { 
-        $uri = "/v3/payments/{$transactionId}/confirm";
-        authToOptions($options, $uri, $config['channelSecret']);
-        $promises[] = $client->requestAsync('POST', $uri, $options);
+    // Body for Online confirm API
+    $bodyParams = [
+        'amount' => (integer) $order['params']['amount'],
+        'currency' => $order['params']['currency'],
+    ];
+    $options['body'] = json_encode($bodyParams);
+
+    // Multi-transactions to same orderId concurrency 
+    if (is_array($transactionId)) {
+
+        // All $transactionIds need same confirm API body (Currency & Price)
+        foreach ($transactionId as $key => $eachId) {
+            $uri = "/v3/payments/{$eachId}/confirm";
+            authToOptions($options, $uri, $config['channelSecret']);
+            $promises[] = $client->requestAsync('POST', $uri, $options);
+        }
+    } 
+    // Single transaction concurrency
+    else {
+
+        for ($i=0; $i < 3; $i++) { 
+            $uri = "/v3/payments/{$transactionId}/confirm";
+            authToOptions($options, $uri, $config['channelSecret']);
+            $promises[] = $client->requestAsync('POST', $uri, $options);
+        }
     }
 }
+
 // Wait on all of the requests to complete. Throws a ConnectException
 // if any of the requests fail
 $results = Promise\unwrap($promises);
@@ -70,7 +98,7 @@ $results = Promise\settle($promises)->wait();
 // You can access each result using the key provided to the unwrap
 // function.
 foreach ($results as $key => $result) {
-    saveLog('Confirm API', $bodyParams, null, json_decode($result['value']->getBody()->getContents(), true), null);
+    saveLog(($otks) ? 'Payment (OTK)' : 'Confirm API', $bodyParams, null, json_decode($result['value']->getBody()->getContents(), true), null);
 }
 
 // Exit
