@@ -167,7 +167,7 @@ class Client
     {
         return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams, null, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -181,7 +181,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', self::$apiUris['request'], null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -207,7 +207,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['confirm']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 40,
+            'timeout' => 40,
             ]);
     }
 
@@ -222,7 +222,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['refund']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -236,7 +236,7 @@ class Client
     {
         return $this->requestHandler('v3', 'GET', str_replace('{transactionId}', $transactionId, self::$apiUris['check']), null, null, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -251,7 +251,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsCapture']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 60,
+            'timeout' => 60,
             ]);
     }
 
@@ -278,7 +278,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{transactionId}', $transactionId, self::$apiUris['authorizationsVoid']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -305,7 +305,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapproved']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 40,
+            'timeout' => 40,
             ]);
     }
 
@@ -320,7 +320,7 @@ class Client
     {
         return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), $queryParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -335,7 +335,7 @@ class Client
     {
         return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -349,7 +349,7 @@ class Client
     {
         return $this->requestHandler('v2', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
     
@@ -364,7 +364,7 @@ class Client
     {
         return $this->requestHandler('v2', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams, null, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -379,7 +379,7 @@ class Client
     {
         return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -394,7 +394,7 @@ class Client
     {
         return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -409,7 +409,7 @@ class Client
     {
         return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 
@@ -423,7 +423,7 @@ class Client
     {
         return $this->requestHandler('v2', 'GET', self::$apiUris['authorizations'], $queryParams, null, [
             'connect_timeout' => 5,
-            'read_timeout' => 20,
+            'timeout' => 20,
             ]);
     }
 }
