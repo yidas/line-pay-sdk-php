@@ -58,7 +58,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           form.action = "onetimekeys-pay.php";
         }
         else if (form.useRegKey.checked) {
-          form.action = "preapproved.php";
+          form.action = (form.preapprovedAction.value=='pay') ? "preapproved.php" : "preapproved-check.php";
         }
         else if (form.transactionId.value) {
           form.action = "details.php";
@@ -189,14 +189,25 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     </div>
     <div class="collapse" id="collapseMoreSettings">
       <div class="card card-body">
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="inputPreapproved" name="preapproved" <?=isset($config['preapproved']) ? 'checked' : ''?>>
-          <label class="form-check-label" for="inputPreapproved">PayType: <code>PREAPPROVED</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
-        </div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="inputUseRegKey" name="useRegKey">
-          <label class="form-check-label" for="inputUseRegKey">Pay Preapproved by <code>regKey</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
-          <input type="text" class="form-control form-control-sm" id="inputRegKey" name="regKey" placeholder="Preapproved regKey" value="<?=isset($config['regKey']) ? $config['regKey'] : ''?>">
+        <div class="form-group">
+          <label>PreApproved <font color="#cccccc"><i>(Online Only)</i></font></label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="inputPreapproved" name="preapproved" <?=isset($config['preapproved']) ? 'checked' : ''?>>
+            <label class="form-check-label" for="inputPreapproved">PayType: <code>PREAPPROVED</code></label>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="inputUseRegKey" name="useRegKey">
+            <label class="form-check-label" for="inputUseRegKey">Preapproved by <code>regKey</code></label>
+            <input type="text" class="form-control form-control-sm" id="inputRegKey" name="regKey" placeholder="Preapproved regKey" value="<?=isset($config['regKey']) ? $config['regKey'] : ''?>">
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="inputPreapprovedCheck" name="preapprovedAction" value="check">
+              <label class="form-check-label" for="inputPreapprovedCheck">Check <code>regKey</code> <font color="#cccccc"><i>Default</i></font></label>
+            </div>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="inputPreapprovedPay" name="preapprovedAction" value="pay">
+              <label class="form-check-label" for="inputPreapprovedPay">Pay preapproved by <code>regKey</code></label>
+            </div>
+          </div>
         </div>
         <hr>
         <div class="form-check">

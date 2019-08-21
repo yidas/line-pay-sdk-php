@@ -36,7 +36,7 @@ if (isset($input['captureFalse'])) {
 $response = $linePay->preapproved($input['regKey'], $orderParams);
 
 // Log
-saveLog('Pay Preapproved API', $orderParams, null, $response->toArray(), null, true);
+saveLog('Preapproved Pay API', $orderParams, null, $response->toArray(), null, true);
 
 // Check Reserve API result
 if (!$response->isSuccessful()) {

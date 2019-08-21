@@ -34,4 +34,3 @@ if (!$response->isSuccessful()) {
 }
 
 die("<script>alert('Result:\\nCode: {$response['returnCode']}\\nMessage: {$response['returnMessage']}');history.back();</script>");
-var_dump($response["info"]);
