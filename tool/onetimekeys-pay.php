@@ -48,7 +48,7 @@ if ($input['useLimit'] || $input['rewardLimit']) {
 $response = $linePay->oneTimeKeysPay($orderParams);
 
 // Log
-saveLog('OneTimeKeysPay API', $orderParams, null, $response->toArray(), null, true);
+saveLog('OneTimeKeysPay API', $response, true);
 
 // Check Reserve API result
 if (!$response->isSuccessful()) {
@@ -68,7 +68,7 @@ $_SESSION['config'] = $input;
 $response = $linePay->ordersCheck($orderId);
 
 // Log
-saveLog('Payment Status Check API', [], null, $response->toArray(), null);
+saveLog('Payment Status Check API', $response);
 
 // Check the transaction
 if (!isset($response["info"]) || $response["info"]['orderId'] != $orderId) {

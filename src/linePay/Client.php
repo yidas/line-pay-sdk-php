@@ -135,6 +135,15 @@ class Client
             $options['body'] = json_encode($bodyParams);
         }
 
+        // Guzzle on_stats
+        $stats = null;
+        $options['on_stats'] = function (\GuzzleHttp\TransferStats $transferStats) use (&$stats) {
+            // Assign object
+            $stats = $transferStats;
+            $stats->responseTime = microtime(true);
+            $stats->requestTime = $stats->responseTime - $stats->getTransferTime();
+        };
+
         switch ($version) {
             case 'v2':
                 // V2 API Authentication
@@ -154,7 +163,7 @@ class Client
                 break;
         }
 
-        return new Response($response);
+        return new Response($response, $stats);
     }
 
     /**

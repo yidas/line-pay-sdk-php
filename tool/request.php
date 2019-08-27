@@ -80,7 +80,7 @@ if ($input['useLimit'] || $input['rewardLimit']) {
 $response = $linePay->reserve($orderParams);
 
 // Log
-saveLog('Request API', $orderParams, null, $response->toArray(), null, true);
+saveLog('Request API', $response, true);
 
 // Check Request API result
 if (!$response->isSuccessful()) {

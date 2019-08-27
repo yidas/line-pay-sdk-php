@@ -29,7 +29,7 @@ $refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amou
 $response = $linePay->refund($order['transactionId'], $refundParams);
 
 // Log
-saveLog('Refund API', $refundParams, null, $response->toArray(), null);
+saveLog('Refund API', $response);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
@@ -41,7 +41,7 @@ $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
 // Log
-saveLog('Payment Details API', [], null, $response->toArray(), null);
+saveLog('Payment Details API', $response);
 // Check the transaction
 if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
     die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");

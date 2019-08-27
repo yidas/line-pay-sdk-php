@@ -332,9 +332,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <?php endif ?>
           <div>
             <p><strong><?=$log['name']?></strong> (<?=$log['datetime']?>)</p>
-            <p>Request body:</p>
+            <div class="alert alert-light small" role="alert">
+              <strong><?=$log['method']?></strong> <?=$log['uri']?><br>
+              <strong>TransferTime</strong>: <?=$log['transferTime']?> s
+            </div>
+            <p>Request body: <small>(<?=$log['request']['datetime']?>)</small></p>
             <pre class="log"><?=$log['request']['content']?></pre>
-            <p>Response body:</p>
+            <p>Response body: <small>(<?=$log['response']['datetime']?>)</small></p>
             <pre class="log"><?=$log['response']['content']?></pre>
           </div>
         <?php endforeach ?>

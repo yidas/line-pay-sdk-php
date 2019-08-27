@@ -7,6 +7,7 @@
 require __DIR__ . '/_config.php';
 
 use yidas\linePay\Client as LinePayClient;
+use yidas\linePay\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 
@@ -34,6 +35,15 @@ $client = new Client([
         'X-LINE-ChannelId' => $config['channelId'],
     ]
 ]);
+
+// Guzzle on_stats
+$stats = [];
+$options['on_stats'] = function (\GuzzleHttp\TransferStats $transferStats) use (&$stats) {
+    // Assign object
+    $transferStats->responseTime = microtime(true);
+    $transferStats->requestTime = $transferStats->responseTime - $transferStats->getTransferTime();
+    $stats[] = $transferStats;
+};
 
 // Promises list
 $promises = [];
@@ -98,7 +108,8 @@ $results = Promise\settle($promises)->wait();
 // You can access each result using the key provided to the unwrap
 // function.
 foreach ($results as $key => $result) {
-    saveLog(($otks) ? 'Payment (OTK)' : 'Confirm API', $bodyParams, null, json_decode($result['value']->getBody()->getContents(), true), null);
+    $response = new Response($result['value'], $stats[$key]);
+    saveLog(($otks) ? 'Payment (OTK)' : 'Confirm API', $response);
 }
 
 // Exit

@@ -26,7 +26,7 @@ $order = $_SESSION['linePayOrder'];
 $response = $linePay->check($transactionId);
 
 // Log
-saveLog('Check Payment Status API', [], null, $response->toArray(), null);
+saveLog('Check Payment Status API', $response);
 
 // Check result
 if (!$response->isSuccessful()) {

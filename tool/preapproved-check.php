@@ -23,6 +23,6 @@ $linePay = new \yidas\linePay\Client([
 $response = $linePay->preapprovedCheck($input['regKey']);
 
 // Log
-saveLog('Preapproved Check API', null, null, $response->toArray(), null, true);
+saveLog('Preapproved Check API', $response, true);
 
 die("<script>alert('Result:\\nCode: {$response['returnCode']}\\nMessage: {$response['returnMessage']}');history.back();</script>");

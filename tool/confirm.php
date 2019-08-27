@@ -31,7 +31,7 @@ $bodyParams = [
 $response = $linePay->confirm($order['transactionId'], $bodyParams);
 
 // Log
-saveLog('Confirm API', $bodyParams, null, $response->toArray(), null);
+saveLog('Confirm API', $response);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
@@ -56,7 +56,7 @@ if ($order['params']['amount']!=0) {
     ]);
 
     // Log
-    saveLog('Payment Details API', [], null, $response->toArray(), null);
+    saveLog('Payment Details API', $response);
 
     // Save error info if confirm fails
     if (!$response->isSuccessful()) {
