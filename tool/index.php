@@ -219,13 +219,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Overwrite Fields</label>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 115px;">OrderId</span>
+              <span class="input-group-text" style="min-width: 120px;">OrderId</span>
             </div>
             <input type="text" name="orderId" class="form-control" placeholder="Fill in to overwrite orderId">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 115px;">ImageUrl</span>
+              <span class="input-group-text" style="min-width: 120px;">ImageUrl</span>
             </div>
             <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
           </div>
@@ -233,22 +233,33 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <hr>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">DeviceProfileId</span>
+            <span class="input-group-text" style="min-width: 120px;">DeviceProfileId</span>
           </div>
           <input type="text" name="merchantDeviceProfileId" class="form-control" pattern="[a-zA-Z0-9\s]+" placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric Only)">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" style="min-width: 115px;">BranchName</label>
+            <label class="input-group-text" style="min-width: 120px;">BranchName</label>
           </div>
           <input type="text" name="branchName" class="form-control" id="" placeholder="options.extra.branchName">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="inputLocale" style="min-width: 115px;">Locale</label>
+            <label class="input-group-text" for="inputConfirmUrlType" style="min-width: 120px;">ConfirmUrlType</label>
+          </div>
+          <select class="custom-select" id="inputConfirmUrlType" name="confirmUrlType">
+            <option value="" selected>Default (Online Only)</option>
+            <option value="CLIENT">CLIENT</option>
+            <option value="SERVER">SERVER</option>
+            <option value="NONE">NONE</option>
+          </select>
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputLocale" style="min-width: 120px;">Locale</label>
           </div>
           <select class="custom-select" id="inputLocale" name="locale">
-            <option selected>Default (Online Only)</option>
+            <option value="" selected>Default (Online Only)</option>
             <option value="en">en</option>
             <option value="ja">ja</option>
             <option value="ko">ko</option>
@@ -265,13 +276,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <label>POINT Limit: <code>promotionRestriction</code></label>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">UseLimit</span>
+            <span class="input-group-text" style="min-width: 120px;">UseLimit</span>
           </div>
           <input type="number" name="useLimit" class="form-control" placeholder="options.extra.promotionRestriction.useLimit">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">RewardLimit</span>
+            <span class="input-group-text" style="min-width: 120px;">RewardLimit</span>
           </div>
           <input type="number" name="rewardLimit" class="form-control" placeholder="options.extra.promotionRestriction.rewardLimit">
         </div>

@@ -64,6 +64,10 @@ if (isset($input['preapproved'])) {
 if ($input['branchName']) {
     $orderParams['options']['extra']['branchName'] = $input['branchName'];
 }
+// ConfirmUrlType
+if ($input['confirmUrlType']) {
+    $orderParams['redirectUrls']['confirmUrlType'] = $input['confirmUrlType'];
+}
 // Display locale
 if ($input['locale']) {
     $orderParams['options']['display']['locale'] = $input['locale'];

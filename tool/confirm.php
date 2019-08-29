@@ -3,7 +3,10 @@
 require __DIR__ . '/_config.php';
 
 // Get saved config
-$config = $_SESSION['config'];
+$config = isset($_SESSION['config']) ? $_SESSION['config'] : null;
+if (!$config) {
+    die("<script>alert('Session invalid');location.href='./index.php';</script>");
+}
 // Create LINE Pay client
 $linePay = new \yidas\linePay\Client([
     'channelId' => $config['channelId'],
