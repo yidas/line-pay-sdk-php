@@ -3,7 +3,10 @@
 require __DIR__ . '/_config.php';
 
 // Get saved config
-$config = $_SESSION['config'];
+$config = isset($_SESSION['config']) ? $_SESSION['config'] : null;
+if (!$config) {
+    die("<script>alert('Session invalid');location.href='./index.php';</script>");
+}
 // Create LINE Pay client
 $linePay = new \yidas\linePay\Client([
     'channelId' => $config['channelId'],
@@ -31,7 +34,7 @@ $bodyParams = [
 $response = $linePay->confirm($order['transactionId'], $bodyParams);
 
 // Log
-saveLog('Confirm API', $bodyParams, null, $response->toArray(), null);
+saveLog('Confirm API', $response);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
@@ -56,7 +59,7 @@ if ($order['params']['amount']!=0) {
     ]);
 
     // Log
-    saveLog('Payment Details API', [], null, $response->toArray(), null);
+    saveLog('Payment Details API', $response);
 
     // Save error info if confirm fails
     if (!$response->isSuccessful()) {

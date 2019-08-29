@@ -20,20 +20,32 @@ require __DIR__ . '/../vendor/autoload.php';
  * @param boolean $reset
  * @return void
  */
-function saveLog($name, array $requestBody=null, $requestTime=null, array $responseBody, $responseTime=null, $reset=false)
+function saveLog($name, \yidas\linePay\Response $response, $reset=false)
 {
+    $stats = $response->getStats();
+    $request = $stats->getRequest();
+    // Rewind the stream
+    $request->getBody()->rewind();
+
+    // Content
+    $requestContentArray = json_decode($request->getBody()->getContents());
+    $responseContentArray = $response->toArray();
+    
     // Log
     $logs = ($reset) ? [] : $_SESSION['logs'];
     $logs[] = [
         'name' => $name, 
         'datetime' => date("c"), 
+        'uri' => urldecode($stats->getEffectiveUri()->__toString()),
+        'method' => $request->getMethod(),
+        'transferTime' => $stats->getTransferTime(),
         'request' => [
-            'content' => ($requestBody) ? json_encode($requestBody, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => $requestTime,
+            'content' => ($requestContentArray) ? json_encode($requestContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
+            'datetime' => DateTime::createFromFormat('U.u', $stats->requestTime)->format("Y-m-d H:i:s.u"),
         ],
         'response' => [
-            'content' => ($responseBody) ? json_encode($responseBody, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => $responseTime,
+            'content' => ($responseContentArray) ? json_encode($responseContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
+            'datetime' => DateTime::createFromFormat('U.u', $stats->responseTime)->format("Y-m-d H:i:s.u"),
         ],
     ];
     $_SESSION['logs'] = $logs;

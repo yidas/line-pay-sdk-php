@@ -26,7 +26,7 @@ $order = $_SESSION['linePayOrder'];
 $response = $linePay->check($transactionId);
 
 // Log
-saveLog('Check Payment Status API', [], null, $response->toArray(), null);
+saveLog('Check Payment Status API', $response);
 
 // Check result
 if (!$response->isSuccessful()) {
@@ -34,4 +34,3 @@ if (!$response->isSuccessful()) {
 }
 
 die("<script>alert('Result:\\nCode: {$response['returnCode']}\\nMessage: {$response['returnMessage']}');history.back();</script>");
-var_dump($response["info"]);

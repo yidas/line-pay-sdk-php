@@ -34,9 +34,11 @@ OUTLINE
             - [取得為陣列](#取得為陣列)
         - [方法](#方法)
             - [isSuccessful()](#issuccessful)
+            - [getPaymentUrl()](#getpaymenturl)
+            - [getPayInfo()](#getpayinfo)
             - [toArray()](#toarray)
             - [toObject()](#toobject)
-            - [getPayInfo()](#getpayinfo)
+            - [getStats()](#getstats)
     - [Online APIs](#online-apis)
         - [取得查看付款紀錄 API](#取得查看付款紀錄-api)
         - [付款request API](#付款request-api)
@@ -241,6 +243,10 @@ if (!$response->isSuccessful()) {
 ##### toObject()
 
 取得物件格式的 LINE Pay 回傳資料
+
+##### getStats()
+
+取得`\GuzzleHttp\TransferStats`物件
 
 ### Online APIs
 

@@ -16,6 +16,11 @@ class Response implements \ArrayAccess
     public $response;
 
     /**
+     * @var object \GuzzleHttp\TransferStats $stats
+     */
+    public $stats;
+
+    /**
      * @var array Cache data for body with array data type
      */
     protected $bodyArrayCache = null;
@@ -30,9 +35,20 @@ class Response implements \ArrayAccess
      *
      * @param object \GuzzleHttp\Psr7\Response $response
      */
-    function __construct(\GuzzleHttp\Psr7\Response $response) 
+    function __construct(\GuzzleHttp\Psr7\Response $response, \GuzzleHttp\TransferStats $stats) 
     {
         $this->response = $response;
+        $this->stats = $stats;
+    }
+
+    /**
+     * Get \GuzzleHttp\TransferStats object
+     *
+     * @return \GuzzleHttp\TransferStats
+     */
+    public function getStats()
+    {
+        return $this->stats;
     }
 
     /**

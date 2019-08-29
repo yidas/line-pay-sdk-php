@@ -58,7 +58,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           form.action = "onetimekeys-pay.php";
         }
         else if (form.useRegKey.checked) {
-          form.action = "preapproved.php";
+          form.action = (form.preapprovedAction.value=='pay') ? "preapproved.php" : "preapproved-check.php";
         }
         else if (form.transactionId.value) {
           form.action = "details.php";
@@ -189,14 +189,25 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     </div>
     <div class="collapse" id="collapseMoreSettings">
       <div class="card card-body">
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="inputPreapproved" name="preapproved" <?=isset($config['preapproved']) ? 'checked' : ''?>>
-          <label class="form-check-label" for="inputPreapproved">PayType: <code>PREAPPROVED</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
-        </div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="inputUseRegKey" name="useRegKey">
-          <label class="form-check-label" for="inputUseRegKey">Pay Preapproved by <code>regKey</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
-          <input type="text" class="form-control form-control-sm" id="inputRegKey" name="regKey" placeholder="Preapproved regKey" value="<?=isset($config['regKey']) ? $config['regKey'] : ''?>">
+        <div class="form-group">
+          <label>PreApproved <font color="#cccccc"><i>(Online Only)</i></font></label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="inputPreapproved" name="preapproved" <?=isset($config['preapproved']) ? 'checked' : ''?>>
+            <label class="form-check-label" for="inputPreapproved">PayType: <code>PREAPPROVED</code></label>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="inputUseRegKey" name="useRegKey">
+            <label class="form-check-label" for="inputUseRegKey">Preapproved by <code>regKey</code></label>
+            <input type="text" class="form-control form-control-sm" id="inputRegKey" name="regKey" placeholder="Preapproved regKey" value="<?=isset($config['regKey']) ? $config['regKey'] : ''?>">
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="inputPreapprovedCheck" name="preapprovedAction" value="check">
+              <label class="form-check-label" for="inputPreapprovedCheck">Check <code>regKey</code> <font color="#cccccc"><i>Default</i></font></label>
+            </div>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" id="inputPreapprovedPay" name="preapprovedAction" value="pay">
+              <label class="form-check-label" for="inputPreapprovedPay">Pay preapproved by <code>regKey</code></label>
+            </div>
+          </div>
         </div>
         <hr>
         <div class="form-check">
@@ -208,13 +219,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Overwrite Fields</label>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 115px;">OrderId</span>
+              <span class="input-group-text" style="min-width: 120px;">OrderId</span>
             </div>
             <input type="text" name="orderId" class="form-control" placeholder="Fill in to overwrite orderId">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 115px;">ImageUrl</span>
+              <span class="input-group-text" style="min-width: 120px;">ImageUrl</span>
             </div>
             <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
           </div>
@@ -222,22 +233,33 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <hr>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">DeviceProfileId</span>
+            <span class="input-group-text" style="min-width: 120px;">DeviceProfileId</span>
           </div>
           <input type="text" name="merchantDeviceProfileId" class="form-control" pattern="[a-zA-Z0-9\s]+" placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric Only)">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" style="min-width: 115px;">BranchName</label>
+            <label class="input-group-text" style="min-width: 120px;">BranchName</label>
           </div>
           <input type="text" name="branchName" class="form-control" id="" placeholder="options.extra.branchName">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="inputLocale" style="min-width: 115px;">Locale</label>
+            <label class="input-group-text" for="inputConfirmUrlType" style="min-width: 120px;">ConfirmUrlType</label>
+          </div>
+          <select class="custom-select" id="inputConfirmUrlType" name="confirmUrlType">
+            <option value="" selected>Default (Online Only)</option>
+            <option value="CLIENT">CLIENT</option>
+            <option value="SERVER">SERVER</option>
+            <option value="NONE">NONE</option>
+          </select>
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputLocale" style="min-width: 120px;">Locale</label>
           </div>
           <select class="custom-select" id="inputLocale" name="locale">
-            <option selected>Default (Online Only)</option>
+            <option value="" selected>Default (Online Only)</option>
             <option value="en">en</option>
             <option value="ja">ja</option>
             <option value="ko">ko</option>
@@ -254,13 +276,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <label>POINT Limit: <code>promotionRestriction</code></label>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">UseLimit</span>
+            <span class="input-group-text" style="min-width: 120px;">UseLimit</span>
           </div>
           <input type="number" name="useLimit" class="form-control" placeholder="options.extra.promotionRestriction.useLimit">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 115px;">RewardLimit</span>
+            <span class="input-group-text" style="min-width: 120px;">RewardLimit</span>
           </div>
           <input type="number" name="rewardLimit" class="form-control" placeholder="options.extra.promotionRestriction.rewardLimit">
         </div>
@@ -321,9 +343,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <?php endif ?>
           <div>
             <p><strong><?=$log['name']?></strong> (<?=$log['datetime']?>)</p>
-            <p>Request body:</p>
+            <div class="alert alert-light small" role="alert">
+              <strong><?=$log['method']?></strong> <?=$log['uri']?><br>
+              <strong>TransferTime</strong>: <?=$log['transferTime']?> s
+            </div>
+            <p>Request body: <small>(<?=$log['request']['datetime']?>)</small></p>
             <pre class="log"><?=$log['request']['content']?></pre>
-            <p>Response body:</p>
+            <p>Response body: <small>(<?=$log['response']['datetime']?>)</small></p>
             <pre class="log"><?=$log['response']['content']?></pre>
           </div>
         <?php endforeach ?>

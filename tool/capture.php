@@ -31,7 +31,7 @@ $bodyParams = [
 $response = $linePay->capture($order['transactionId'], $bodyParams);
 
 // Log
-saveLog('Capture API', $bodyParams, null, $response->toArray(), null);
+saveLog('Capture API', $response);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
@@ -43,7 +43,7 @@ $response = $linePay->details([
     'transactionId' => [$order['transactionId']],
 ]);
 // Log
-saveLog('Payment Details API', [], null, $response->toArray(), null);
+saveLog('Payment Details API', $response);
 
 // Check the transaction
 if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {

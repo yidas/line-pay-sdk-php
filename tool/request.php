@@ -64,6 +64,10 @@ if (isset($input['preapproved'])) {
 if ($input['branchName']) {
     $orderParams['options']['extra']['branchName'] = $input['branchName'];
 }
+// ConfirmUrlType
+if ($input['confirmUrlType']) {
+    $orderParams['redirectUrls']['confirmUrlType'] = $input['confirmUrlType'];
+}
 // Display locale
 if ($input['locale']) {
     $orderParams['options']['display']['locale'] = $input['locale'];
@@ -80,7 +84,7 @@ if ($input['useLimit'] || $input['rewardLimit']) {
 $response = $linePay->reserve($orderParams);
 
 // Log
-saveLog('Request API', $orderParams, null, $response->toArray(), null, true);
+saveLog('Request API', $response, true);
 
 // Check Request API result
 if (!$response->isSuccessful()) {

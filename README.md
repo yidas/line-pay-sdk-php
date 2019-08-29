@@ -34,9 +34,11 @@ OUTLINE
             - [Retrieving as Array](#retrieving-as-array)
         - [Methods](#methods)
             - [isSuccessful()](#issuccessful)
+            - [getPaymentUrl()](#getpaymenturl)
+            - [getPayInfo()](#getpayinfo)
             - [toArray()](#toarray)
             - [toObject()](#toobject)
-            - [getPayInfo()](#getpayinfo)
+            - [getStats()](#getstats)
     - [Online APIs](#online-apis)
         - [Payment Details API](#payment-details-api)
         - [Request API](#request-api)
@@ -243,6 +245,10 @@ Get LINE Pay response body as array
 ##### toObject()
 
 Get LINE Pay response body as object
+
+##### getStats()
+
+Get `\GuzzleHttp\TransferStats` object
 
 ### Online APIs
 

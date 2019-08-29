@@ -22,7 +22,7 @@ $response = $linePay->details([
 ]);
 
 // Log
-saveLog('Payment Details API', [], null, $response->toArray(), null);
+saveLog('Payment Details API', $response);
 
 // Save error info if confirm fails
 if (!$response->isSuccessful() || !isset($response["info"]) || $response["info"][0]['transactionId'] != $input['transactionId']) {
