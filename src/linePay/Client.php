@@ -10,7 +10,7 @@ use GuzzleHttp\Client as HttpClient;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.1.1
+ * @version 3.2.0
  */
 class Client
 {
