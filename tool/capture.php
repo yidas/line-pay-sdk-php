@@ -25,7 +25,7 @@ if ($order['transactionId'] != $transactionId) {
 
 // Online Capture API
 $bodyParams = [
-    "amount" => $order['params']['amount'],
+    "amount" => (isset($_GET['amount']) && $_GET['amount']) ? $_GET['amount'] : $order['params']['amount'],
     "currency" => $order['params']['currency'],
 ];
 $response = $linePay->capture($order['transactionId'], $bodyParams);
