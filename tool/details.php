@@ -18,7 +18,7 @@ $linePay = new \yidas\linePay\Client([
 
 // Use Order Check API to confirm the transaction
 $response = $linePay->details([
-    'transactionId' => [$input['transactionId']],
+    'transactionId' => $input['transactionId'],
 ]);
 
 // Log

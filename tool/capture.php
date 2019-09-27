@@ -40,7 +40,7 @@ if (!$response->isSuccessful()) {
 
 // Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
 $response = $linePay->details([
-    'transactionId' => [$order['transactionId']],
+    'transactionId' => $order['transactionId'],
 ]);
 // Log
 saveLog('Payment Details API', $response);

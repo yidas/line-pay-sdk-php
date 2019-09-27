@@ -55,7 +55,7 @@ if (isset($config['preapproved'])) {
 if ($order['params']['amount']!=0) {
     // Use Details API to confirm the transaction (Details API verification is more stable then Confirm API)
     $response = $linePay->details([
-        'transactionId' => [$order['transactionId']],
+        'transactionId' => $order['transactionId'],
     ]);
 
     // Log
