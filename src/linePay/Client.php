@@ -5,6 +5,7 @@ namespace yidas\linePay;
 use Exception;
 use yidas\linePay\Response;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Psr7\Request;
 
 /**
  * LINE Pay Client
@@ -54,6 +55,13 @@ class Client
      * @var GuzzleHttp\Client
      */
     protected $httpClient;
+
+    /**
+     * PSR-7 Request
+     *
+     * @var GuzzleHttp\Psr7\Request
+     */
+    protected $request;
 
     /**
      * Saved LINE Pay Channel Secret for v3 API Authentication
@@ -109,9 +117,20 @@ class Client
             'base_uri' => $baseUri,
             // 'timeout'  => 6.0,
             'headers' => $headers,
+            'http_errors' => false,
         ]);
 
         return $this;
+    }
+
+    /**
+     * Get Request object
+     *
+     * @return GuzzleHttp\Psr7\Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 
     /**
@@ -127,13 +146,13 @@ class Client
      */
     protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
     {
-        // Request options
-        if ($queryParams) {
-            $options['query'] = $queryParams;
-        }
-        if ($bodyParams) {
-            $options['body'] = json_encode($bodyParams);
-        }
+        // Headers
+        $headers = [];
+        // Query String
+        $queryString = ($queryParams) ? http_build_query($queryParams) : null;
+        $url = ($queryParams) ? "{$uri}?{$queryString}" : $uri ;
+        // Body
+        $body = ($bodyParams) ? json_encode($bodyParams) : '';
 
         // Guzzle on_stats
         $stats = null;
@@ -147,20 +166,30 @@ class Client
         switch ($version) {
             case 'v2':
                 // V2 API Authentication
-                $options['headers']['X-LINE-ChannelSecret'] = $this->channelSecret;
-                $response = $this->httpClient->request($method, $uri, $options);
+                $headers['X-LINE-ChannelSecret'] = $this->channelSecret;
                 break;
             
             case 'v3':
             default:
                 // V3 API Authentication
                 $authNonce = date('c'); // ISO 8601 date
-                $authParams = ($method=='GET' && $queryParams) ? http_build_query($queryParams) : (($bodyParams) ? $options['body'] : null);
+                $authParams = ($method=='GET' && $queryParams) ? $queryString : (($bodyParams) ? $body : null);
                 $authMacText = $this->channelSecret . $uri . $authParams . $authNonce;
-                $options['headers']['X-LINE-Authorization'] = base64_encode(hash_hmac('sha256', $authMacText, $this->channelSecret, true));
-                $options['headers']['X-LINE-Authorization-Nonce'] = $authNonce;
-                $response = $this->httpClient->request($method, $uri, $options);
+                $headers['X-LINE-Authorization'] = base64_encode(hash_hmac('sha256', $authMacText, $this->channelSecret, true));
+                $headers['X-LINE-Authorization-Nonce'] = $authNonce;
                 break;
+        }
+
+        // Send request with PSR-7 pattern
+        $this->request = new Request($method, $url, $headers, $body);
+        $this->request->timestamp = microtime(true);
+        try {
+
+            $response = $this->httpClient->send($this->request, $options);
+
+        } catch (\GuzzleHttp\Exception\ConnectException $e) {
+
+            throw new \yidas\linePay\exception\ConnectException($e->getMessage(), $this->request);
         }
 
         return new Response($response, $stats);
