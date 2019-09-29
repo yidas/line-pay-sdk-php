@@ -57,6 +57,8 @@ OUTLINE
         - [Capture](#capture)
         - [Refund](#refund)
         - [取得查看授權記錄 API](#取得查看授權記錄-api)
+    - [Exceptions](#exceptions)
+        - [ConnectException](#connectException)
 - [外部資源](#外部資源)
 - [參考](#參考)
 
@@ -533,6 +535,28 @@ $response = $linePay->authorizations([
 $response = $linePay->authorizations([
     "orderId" => $orderId,
 ]);
+```
+
+---
+
+EXCEPTIONS
+==========
+
+Client會在API串接處理期間發生錯誤時拋出異常。
+
+### ConnectException
+
+`yidas\linePay\exception\ConnectException` 當出現網路錯誤(如Timeout)時會拋出異常。
+
+```php
+try {
+
+    $response = $linePay->confirm($transactionId, $bodyParams);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+
+    // Process of confirm API timeout handling
+}
 ```
 
 ---

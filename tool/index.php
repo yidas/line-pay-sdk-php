@@ -96,8 +96,11 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
       <hr>
       <p><strong>Refund Info</strong></p>
       <?php foreach ($order['info']['refundList'] as $key => $refund): ?>
-      <p>RefundAmount: <?=$refund['refundAmount']?></p>
-      <p>RefundTransactionDate: <?=$refund['refundTransactionDate']?></p>
+      <p>
+        Refund (<?=date('c', strtotime($refund['refundTransactionDate']))?>)<br>
+        TransactionId: <?=$refund['refundTransactionId']?><br>
+        Amount: <?=$refund['refundAmount']?>
+      </p>
       <?php endforeach ?>
     <?php endif ?>
     <?php if(isset($config['captureFalse'])):?>

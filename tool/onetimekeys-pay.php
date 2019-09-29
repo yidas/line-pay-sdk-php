@@ -1,5 +1,8 @@
 <?php
 
+use yidas\linePay\Client;
+use yidas\linePay\exception\ConnectException;
+
 require __DIR__ . '/_config.php';
 
 $input = $_POST;
@@ -13,7 +16,7 @@ if (isset($input['merchant'])) {
 }
 
 // Create LINE Pay client
-$linePay = new \yidas\linePay\Client([
+$linePay = new Client([
     'channelId' => $input['channelId'],
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
@@ -44,15 +47,45 @@ if ($input['useLimit'] || $input['rewardLimit']) {
     $orderParams['extras']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
 
-// Online Reserve API
-$response = $linePay->oneTimeKeysPay($orderParams);
+// 1st Pay request
+try {
 
-// Log
-saveLog('OneTimeKeysPay API', $response, true);
+    // Online Reserve API
+    $response = $linePay->oneTimeKeysPay($orderParams);
 
-// Check Reserve API result
-if (!$response->isSuccessful()) {
-    die("<script>alert('ErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
+    // Log
+    saveLog('OneTimeKeysPay API', $response, true);
+
+    // Check Reserve API result
+    if (!$response->isSuccessful()) {
+        die("<script>alert('ErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
+    }
+
+} catch(ConnectException $e) {
+    
+    // Log
+    saveErrorLog('OneTimeKeysPay API', $linePay->getRequest(), true);
+
+    // 2st check requst
+    try {
+        // Use Order Check API to confirm the transaction
+        $response = $linePay->ordersCheck($orderId);
+
+    } catch (ConnectException $e) {
+
+        // Log
+        saveErrorLog('Payment Status Check API', $linePay->getRequest());
+        die("<script>alert('APIs has timeout two times, please check orderId: {$orderId}');location.href='./';</script>");
+    }
+    
+    // Log
+    saveLog('Payment Status Check API', $response);
+    
+    // Check the transaction
+    if (!$response->isSuccessful() || !isset($response["info"]) || $response["info"]['orderId'] != $orderId) {
+        $_SESSION['linePayOrder']['isSuccessful'] = false;
+        die("<script>alert('Payment Status Check Failed\\nErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
+    }
 }
 
 // Save the order info to session for confirm
@@ -63,18 +96,6 @@ $_SESSION['linePayOrder'] = [
 ];
 // Save input for next process and next form
 $_SESSION['config'] = $input;
-
-// Use Order Check API to confirm the transaction
-$response = $linePay->ordersCheck($orderId);
-
-// Log
-saveLog('Payment Status Check API', $response);
-
-// Check the transaction
-if (!isset($response["info"]) || $response["info"]['orderId'] != $orderId) {
-    $_SESSION['linePayOrder']['isSuccessful'] = false;
-    die("<script>alert('Payment Status Check Failed\\nErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
-}
 
 // Code for saving the successful order into your application database...
 $_SESSION['linePayOrder']['isSuccessful'] = true;
