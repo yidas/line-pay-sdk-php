@@ -22,26 +22,25 @@ $order = $_SESSION['linePayOrder'];
 if ($order['transactionId'] != $transactionId) {
     die("<script>alert('TransactionId doesn\'t match');location.href='./index.php';</script>");
 }
-// var_dump($order);exit;
+
 // Online Confirm API
-$response = $linePay->confirm($order['transactionId'], [
-    'amount' => (integer) $order['params']['amount'],
-    'currency' => $order['params']['currency'],
-]);
+try {
+
+    $response = $linePay->confirm($order['transactionId'], [
+        'amount' => (integer) $order['params']['amount'],
+        'currency' => $order['params']['currency'],
+    ]);
+
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    
+    // Implement recheck process
+    die("Confirm API timeout! A recheck mechanism should be implemented.");
+}
 
 // Save error info if confirm fails
 if (!$response->isSuccessful()) {
     $_SESSION['linePayOrder']['confirmCode'] = $response['returnCode'];
     $_SESSION['linePayOrder']['confirmMessage'] = $response['returnMessage'];
-}
-
-// Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
-$response = $linePay->details([
-    'transactionId' => [$order['transactionId']],
-]);
-
-// Check the transaction
-if (!isset($response["info"]) || $response["info"][0]['transactionId'] != $transactionId) {
     $_SESSION['linePayOrder']['isSuccessful'] = false;
     die("<script>alert('Refund Failed\\nErrorCode: {$_SESSION['linePayOrder']['confirmCode']}\\nErrorMessage: {$_SESSION['linePayOrder']['confirmMessage']}');location.href='{$successUrl}';</script>");
 }
