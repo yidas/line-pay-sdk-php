@@ -96,18 +96,30 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
       <hr>
       <p><strong>Refund Info</strong></p>
       <?php foreach ($order['info']['refundList'] as $key => $refund): ?>
-      <p>RefundAmount: <?=$refund['refundAmount']?></p>
-      <p>RefundTransactionDate: <?=$refund['refundTransactionDate']?></p>
+      <p>
+        Refund (<?=date('c', strtotime($refund['refundTransactionDate']))?>)<br>
+        TransactionId: <?=$refund['refundTransactionId']?><br>
+        Amount: <?=$refund['refundAmount']?>
+      </p>
       <?php endforeach ?>
     <?php endif ?>
     <?php if(isset($config['captureFalse'])):?>
       <hr>
       <p><strong>Capture Info</strong></p>
       <p>Pay Status: <?=isset($order['info']['payStatus']) ? $order['info']['payStatus'] : ''?></p>
-      <p>
-        <a href="./capture.php?transactionId=<?=$order['transactionId']?>" class="btn btn-primary">Capture</a>
-        <a href="./void.php?transactionId=<?=$order['transactionId']?>" class="btn btn-danger">Void</a>
-      </p>
+      <div class="clearfix">
+        <div class="float-left">
+          <div class="input-group">
+            <input type="text" id="capture-amount" class="form-control" placeholder="Amount" size="7">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button" onclick="location.href='./capture.php?transactionId=<?=$order['transactionId']?>&amount=' + document.getElementById('capture-amount').value">Capture</button>
+            </div>
+          </div>
+        </div>
+        <div class="float-right">
+          <a href="./void.php?transactionId=<?=$order['transactionId']?>" class="btn btn-danger">Void</a>
+        </div>
+      </div>
     <?php endif ?>
     <?php if(isset($config['preapproved'])):?>
       <hr>
@@ -116,7 +128,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     <?php endif ?>
     <hr>
     <div class="clearfix">
-      <div class=" float-left">
+      <div class="float-left">
         <a href="./index.php" class="btn btn-light">Go Back</a>
       </div>
       <div class="float-right">

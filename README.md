@@ -57,6 +57,8 @@ OUTLINE
         - [Capture](#capture)
         - [Refund](#refund)
         - [Authorization Details](#authorization-details)
+    - [Exceptions](#exceptions)
+        - [ConnectException](#connectException)
 - [Resources](#resources)
 - [References](#references)
 
@@ -539,6 +541,29 @@ $response = $linePay->authorizations([
 $response = $linePay->authorizations([
     "orderId" => $orderId,
 ]);
+```
+
+---
+
+EXCEPTIONS
+==========
+
+Client throws exceptions for errors that occur during a API transaction.
+
+### ConnectException
+
+A `yidas\linePay\exception\ConnectException` exception is thrown in the event of a networking error (Timeout). 
+
+```php
+try {
+
+    $response = $linePay->confirm($transactionId, $bodyParams);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+
+    // Process of confirm API timeout handling
+}
+
 ```
 
 ---

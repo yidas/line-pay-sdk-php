@@ -23,22 +23,31 @@ if ($order['transactionId'] != $transactionId) {
     die("<script>alert('TransactionId doesn\'t match');location.href='./index.php';</script>");
 }
 
-// Online Refund API
-$refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
-$response = $linePay->refund($order['transactionId'], $refundParams);
+// API
+try {
 
-// Save error info if confirm fails
-if (!$response->isSuccessful()) {
-    die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
-}
+    // Online Refund API
+    $refundParams = ($_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
+    $response = $linePay->refund($order['transactionId'], $refundParams);
 
-// Use Details API to confirm the transaction (Details API verification is  stable then Confirm API)
-$response = $linePay->details([
-    'transactionId' => [$order['transactionId']],
-]);
-// Check the transaction
-if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
-    die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");
+    // Save error info if confirm fails
+    if (!$response->isSuccessful()) {
+        die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');location.href='{$successUrl}';</script>");
+    }
+
+    // Use Details API to confirm the transaction and get refund detail info
+    $response = $linePay->details([
+        'transactionId' => [$order['transactionId']],
+    ]);
+    // Check the transaction
+    if (!isset($response["info"][0]['refundList']) || $response["info"][0]['transactionId'] != $transactionId) {
+        die("<script>alert('Refund Failed');location.href='{$successUrl}';</script>");
+    }
+
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    
+    // Implement recheck process
+    die("Refund/Details API timeout! A recheck mechanism should be implemented.");
 }
 
 // Code for saving the successful order into your application database...

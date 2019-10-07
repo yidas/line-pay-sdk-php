@@ -13,10 +13,7 @@ require __DIR__ . '/../vendor/autoload.php';
  * Save log into logs in session
  *
  * @param string $name
- * @param array $requestBody
- * @param string $requestTime
- * @param array $responseBody
- * @param string $responseTime
+ * @param \yidas\linePay\Response $response
  * @param boolean $reset
  * @return void
  */
@@ -41,11 +38,45 @@ function saveLog($name, \yidas\linePay\Response $response, $reset=false)
         'transferTime' => $stats->getTransferTime(),
         'request' => [
             'content' => ($requestContentArray) ? json_encode($requestContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => DateTime::createFromFormat('U.u', $stats->requestTime)->format("Y-m-d H:i:s.u"),
+            'datetime' => printDateTime($stats->requestTime),
         ],
         'response' => [
             'content' => ($responseContentArray) ? json_encode($responseContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => DateTime::createFromFormat('U.u', $stats->responseTime)->format("Y-m-d H:i:s.u"),
+            'datetime' => printDateTime($stats->responseTime),
+        ],
+    ];
+    $_SESSION['logs'] = $logs;
+}
+
+/**
+ * Save log into logs in session
+ *
+ * @param string $name
+ * @param \Psr\Http\Message\RequestInterface $request
+ * @param boolean $reset
+ * @return void
+ */
+function saveErrorLog($name, \Psr\Http\Message\RequestInterface $request, $reset=false)
+{    
+    // Content
+    $requestContentArray = json_decode($request->getBody());
+    // Timestamp trick
+    $request->timestamp = isset($request->timestamp) ? $request->timestamp : time();
+    // Log
+    $logs = ($reset) ? [] : $_SESSION['logs'];
+    $logs[] = [
+        'name' => $name, 
+        'datetime' => date("c"), 
+        'uri' => urldecode($request->getUri()),
+        'method' => $request->getMethod(),
+        'transferTime' => (float) (microtime(true) - $request->timestamp),
+        'request' => [
+            'content' => ($requestContentArray) ? json_encode($requestContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
+            'datetime' => printDateTime($request->timestamp),
+        ],
+        'response' => [
+            'content' => '',
+            'datetime' => 'Timeout',
         ],
     ];
     $_SESSION['logs'] = $logs;
@@ -94,4 +125,15 @@ class Merchant
 
         return isset($merchants[$key]) ? $merchants[$key] : null;
     }
+}
+
+/**
+ * Print formatted date time
+ *
+ * @param float $timestamp
+ * @return string
+ */
+function printDateTime($timestamp)
+{
+    return DateTime::createFromFormat('U.u', $timestamp)->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format("Y-m-d H:i:s.u");
 }
