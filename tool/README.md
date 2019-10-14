@@ -19,13 +19,15 @@ FEATURES
 INSTALLATION
 ------------
 
-Use Composer to create a project in your Web directory: 
+Download repository and run Composer install in your Web directory: 
 
 ```
-composer create-project yidas/line-pay-sdk
+git clone git@github.com:yidas/line-pay-sdk-php.git;
+cd line-pay-sdk-php;
+composer install;
 ```
 
-Then you can access the sample site from `https://{yourweb-dir}/line-pay-sdk/tool`.
+Then you can access the sample site from `https://{yourweb-dir}/line-pay-sdk-php/tool`.
 
 
 ---
