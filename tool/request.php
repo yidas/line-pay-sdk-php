@@ -79,6 +79,8 @@ if ($input['useLimit'] || $input['rewardLimit']) {
     $orderParams['options']['extra']['promotionRestriction']['useLimit'] = ($input['useLimit']) ? $input['useLimit'] : 0;
     $orderParams['options']['extra']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
+// Request Body Rewriting
+$orderParams = ($input['requestBody']) ? json_decode($input['requestBody'], true) : $orderParams;
 
 // Online Reserve API
 $response = $linePay->reserve($orderParams);

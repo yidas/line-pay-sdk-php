@@ -308,6 +308,13 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
             </div>
           </div>
         </div>
+        <hr>
+        <div class="form-group">
+          <label>Rewrite Request Body <font color="#cccccc"><i>(JSON string will be decoded then encoded)</i></font></label>
+          <div class="input-group">
+            <textarea class="form-control" name="requestBody" id="" rows="4" style="font-size: 9pt;"></textarea>
+          </div>
+        </div>
       </div>
     </div>
     <hr>
