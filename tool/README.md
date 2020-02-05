@@ -22,7 +22,7 @@ INSTALLATION
 Download repository and run Composer install in your Web directory: 
 
 ```
-git clone git@github.com:yidas/line-pay-sdk-php.git;
+git clone https://github.com/yidas/line-pay-sdk-php.git;
 cd line-pay-sdk-php;
 composer install;
 ```
@@ -44,7 +44,7 @@ MERCHANTS SETTING
 
 You can save your favorite or test LINE Pay merchant account for display and selection on the sample page.
 
-To enable the setting, create `sample/_merchants.json` file (Under `sample` folder) using the following JSON format:
+To enable the setting, create `tool/_merchants.json` file (Under `tool` folder) using the following JSON format:
 
 ```json
 [

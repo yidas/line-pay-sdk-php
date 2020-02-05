@@ -20,7 +20,7 @@ INSTALLATION
 Download repository and run Composer install in your Web directory: 
 
 ```
-git clone git@github.com:yidas/line-pay-sdk-php.git;
+git clone https://github.com/yidas/line-pay-sdk-php.git;
 cd line-pay-sdk-php;
 composer install;
 ```
