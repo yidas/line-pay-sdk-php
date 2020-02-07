@@ -28,9 +28,41 @@ $response = $linePay->check($transactionId);
 // Log
 saveLog('Check Payment Status API', $response);
 
-// Check result
-if (!$response->isSuccessful()) {
-    die("<script>alert('Refund Failed\\nErrorCode: {$response['returnCode']}\\nErrorMessage: {$response['returnMessage']}');history.back();</script>");
+/**
+ * Completed Transaction (Request Details API to complete)
+ */
+if ($response['returnCode'] == "0123") {
+
+    // Use Order Check API to confirm the transaction
+    $resDetails = $linePay->details([
+        'transactionId' => $transactionId,
+    ]);
+
+    // Log
+    saveLog('Payment Details API', $resDetails);
+
+    if ($resDetails->isSuccessful()) {
+        
+        // Save the order info to session for confirm
+        $_SESSION['linePayOrder'] = [
+            'transactionId' => $transactionId,
+            'params' => $resDetails["info"][0],
+            'isSandbox' => $config['isSandbox'], 
+        ];
+
+        // PayInfo sum up
+        $amount = 0;
+        foreach ($resDetails["info"][0]['payInfo'] as $key => $payInfo) {
+            if ($payInfo['method'] != 'DISCOUNT') {
+                $amount += $payInfo['amount'];
+            }
+        }
+        $_SESSION['linePayOrder']['params']['amount'] = $amount;
+        $_SESSION['linePayOrder']['info'] = $resDetails["info"][0];
+
+        // Code for saving the successful order into your application database...
+        $_SESSION['linePayOrder']['isSuccessful'] = true;
+    }
 }
 
 die("<script>alert('Result:\\nCode: {$response['returnCode']}\\nMessage: {$response['returnMessage']}');history.back();</script>");

@@ -67,6 +67,15 @@ if ($input['branchName']) {
 // ConfirmUrlType
 if ($input['confirmUrlType']) {
     $orderParams['redirectUrls']['confirmUrlType'] = $input['confirmUrlType'];
+    // SERVER confirmUrlType flow
+    if ($input['confirmUrlType'] == "SERVER") {
+        $confirmServerData = [
+            "merchant" => $input['merchant'],
+            "amount" => $orderParams['amount'],
+            "currency" => $orderParams['currency'],
+        ];
+        $orderParams['redirectUrls']['confirmUrl'] = "{$baseUrl}/confirm-server.php?" . http_build_query($confirmServerData);
+    }
 }
 // Display locale
 if ($input['locale']) {

@@ -262,7 +262,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <select class="custom-select" id="inputConfirmUrlType" name="confirmUrlType">
             <option value="" selected>Default (Online Only)</option>
             <option value="CLIENT">CLIENT</option>
-            <option value="SERVER">SERVER</option>
+            <option value="SERVER">SERVER (Only support for listed merchants)</option>
             <option value="NONE">NONE</option>
           </select>
         </div>
