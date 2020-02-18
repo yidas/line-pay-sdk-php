@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://pay.line.me/" target="_blank">
-        <img src="https://scdn.line-apps.com/linepay/partner/images/sp_txt_shape_v4_2.png" width="126px">
+        <img src="https://scdn.line-apps.com/linepay/portal/assets/img/portal/jp/logo.svg" width="126px">
     </a>
     <h1 align="center">LINE Pay SDK <i>for</i> PHP</h1>
     <br>
