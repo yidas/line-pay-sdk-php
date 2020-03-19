@@ -172,7 +172,7 @@ class Client
             case 'v3':
             default:
                 // V3 API Authentication
-                $authNonce = date('c'); // ISO 8601 date
+                $authNonce = date('c') . uniqid('-'); // ISO 8601 date + UUID 1
                 $authParams = ($method=='GET' && $queryParams) ? $queryString : (($bodyParams) ? $body : null);
                 $authMacText = $this->channelSecret . $uri . $authParams . $authNonce;
                 $headers['X-LINE-Authorization'] = base64_encode(hash_hmac('sha256', $authMacText, $this->channelSecret, true));
