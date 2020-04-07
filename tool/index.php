@@ -34,7 +34,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" type="image/x-icon" class="js-site-favicon" href="https://github.githubassets.com/favicon.ico">
+    <link rel="icon" type="image/x-icon" class="js-site-favicon" href="https://github.com/fluidicon.png">
     <title>Tool - yidas/line-pay-sdk-php</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
@@ -247,7 +247,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <div class="input-group-prepend">
             <span class="input-group-text" style="min-width: 120px;">DeviceProfileId</span>
           </div>
-          <input type="text" name="merchantDeviceProfileId" class="form-control" pattern="[a-zA-Z0-9\s]+" placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric Only)">
+          <input type="text" name="merchantDeviceProfileId" class="form-control"  placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric Only)">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
