@@ -93,7 +93,7 @@ try {
 
 // Code for saving the successful order into your application database...
 $_SESSION['linePayOrder']['isSuccessful'] = true;
-$_SESSION['linePayOrder']['info'] = $response["info"][0];
+$_SESSION['linePayOrder']['info'] = $response["info"];
 
 // Redirect to successful page
 header("Location: {$successUrl}");
