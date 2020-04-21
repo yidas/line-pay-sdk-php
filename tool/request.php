@@ -84,7 +84,7 @@ if ($input['locale']) {
 // PaymentUrl type
 $paymentUrlType = (isset($input['paymenUrlApp'])) ? 'app' : 'web';
 // PromotionRestriction
-if ($input['useLimit'] || $input['rewardLimit']) {
+if (is_numeric($input['useLimit']) || is_numeric($input['rewardLimit'])) {
     $orderParams['options']['extra']['promotionRestriction']['useLimit'] = ($input['useLimit']) ? $input['useLimit'] : 0;
     $orderParams['options']['extra']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
