@@ -42,7 +42,7 @@ if ($input['branchName']) {
     $orderParams['extras']['branchName'] = $input['branchName'];
 }
 // PromotionRestriction
-if ($input['useLimit'] || $input['rewardLimit']) {
+if (is_numeric($input['useLimit']) || is_numeric($input['rewardLimit'])) {
     $orderParams['extras']['promotionRestriction']['useLimit'] = ($input['useLimit']) ? $input['useLimit'] : 0;
     $orderParams['extras']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
