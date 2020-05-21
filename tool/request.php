@@ -73,6 +73,7 @@ if ($input['confirmUrlType']) {
             "merchant" => $input['merchant'],
             "amount" => $orderParams['amount'],
             "currency" => $orderParams['currency'],
+            "isSandbox" => $input['isSandbox'] ? "true" : "false",
         ];
         $orderParams['redirectUrls']['confirmUrl'] = "{$baseUrl}/confirm-server.php?" . http_build_query($confirmServerData);
     }

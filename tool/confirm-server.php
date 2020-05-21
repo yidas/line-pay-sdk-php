@@ -11,12 +11,13 @@ if (!$input) {
 }
 
 $merchant = Merchant::getMerchant($input['merchant']);
+$isSandbox = isset($input['isSandbox']) && $input['isSandbox']=='true' ? true : false;
 
 // Create LINE Pay client
 $linePay = new Client([
     'channelId' => $merchant['channelId'],
     'channelSecret' => $merchant['channelSecret'],
-    'isSandbox' => false, 
+    'isSandbox' => $isSandbox, 
 ]);
 
 // Successful page URL
@@ -38,6 +39,9 @@ try {
 
     // Save error info if confirm fails
     if (!$response->isSuccessful()) {
+        echo 'Failed';
+    } else {
+        echo 'OK';
     }
 
 } catch (ConnectException $e) {
