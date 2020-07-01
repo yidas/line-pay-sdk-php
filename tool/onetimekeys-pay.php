@@ -46,6 +46,8 @@ if (is_numeric($input['useLimit']) || is_numeric($input['rewardLimit'])) {
     $orderParams['extras']['promotionRestriction']['useLimit'] = ($input['useLimit']) ? $input['useLimit'] : 0;
     $orderParams['extras']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
+// Request Body Rewriting
+$orderParams = ($input['requestBody']) ? json_decode($input['requestBody'], true) : $orderParams;
 
 // 1st Pay request
 try {
