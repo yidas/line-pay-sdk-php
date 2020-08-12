@@ -124,6 +124,21 @@ class Client
     }
 
     /**
+     * Get LINE Pay signature for authentication
+     *
+     * @param string $channelSecret
+     * @param string $uri
+     * @param string $queryOrBody
+     * @param string $nonce
+     * @return string
+     */
+    static public function getAuthSignature($channelSecret, $uri, $queryOrBody, $nonce)
+    {
+        $authMacText = $channelSecret . $uri . $queryOrBody . $nonce;
+        return base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+    }
+
+    /**
      * Get Request object
      *
      * @return GuzzleHttp\Psr7\Request
@@ -174,8 +189,7 @@ class Client
                 // V3 API Authentication
                 $authNonce = date('c') . uniqid('-'); // ISO 8601 date + UUID 1
                 $authParams = ($method=='GET' && $queryParams) ? $queryString : (($bodyParams) ? $body : null);
-                $authMacText = $this->channelSecret . $uri . $authParams . $authNonce;
-                $headers['X-LINE-Authorization'] = base64_encode(hash_hmac('sha256', $authMacText, $this->channelSecret, true));
+                $headers['X-LINE-Authorization'] = self::getAuthSignature($this->channelSecret, $uri, $authParams, $authNonce);
                 $headers['X-LINE-Authorization-Nonce'] = $authNonce;
                 break;
         }
