@@ -2,4 +2,4 @@
 composer.phar
 composer.lock
 # Tool's optional config
-/tool/_merchants.json
+/tool/_merchants.php

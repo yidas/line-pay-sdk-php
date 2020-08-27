@@ -87,7 +87,7 @@ function saveErrorLog($name, \Psr\Http\Message\RequestInterface $request, $reset
  */
 class Merchant
 {
-    private static $configPath = __DIR__ . "/_merchants.json";
+    private static $configPath = __DIR__ . "/_merchants.php";
 
     /**
      * Get merchant list from config
@@ -98,7 +98,7 @@ class Merchant
     {
         if (file_exists(self::$configPath)) {
         
-            $data = json_decode(file_get_contents(self::$configPath), true);
+            $data = include self::$configPath;
 
             // Check format
             foreach ((array)$data as $key => $each) {

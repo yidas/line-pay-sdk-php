@@ -44,20 +44,22 @@ MERCHANTS SETTING
 
 You can save your favorite or test LINE Pay merchant account for display and selection on the sample page.
 
-To enable the setting, create `tool/_merchants.json` file (Under `tool` folder) using the following JSON format:
+To enable the setting, create `tool/_merchants.php` file (Under `tool` folder) using the following PHP array format:
 
-```json
-[
-    {
-        "title": "First Merchant",
-        "channelId": "{your channelId}",
-        "channelSecret": "{your channelSecret}"
-    },
-    {
-        "title": "Second Merchant",
-        "channelId": "{your channelId}",
-        "channelSecret": "{your channelSecret}"
-    }
+```php
+<?php
+
+return [
+    [
+        "title" => "First Merchant",
+        "channelId" => "{your channelId}",
+        "channelSecret" => "{your channelSecret}",
+    ],
+    [
+        "title" => "Second Merchant",
+        "channelId" => "{your channelId}",
+        "channelSecret" => "{your channelSecret}",
+    ],
 ]
 ```
 
