@@ -74,9 +74,9 @@ class Client
      * Constructor
      *
      * @param string|array $optParams API Key or option parameters
-     *  'key' => Google API Key
-     *  'clientID' => Google clientID
-     *  'clientSecret' => Google clientSecret
+     *  'channelId' => Your merchant X-LINE-ChannelId
+     *  'channelSecret' => Your merchant X-LINE-ChannelSecret
+     *  'isSandbox' => Sandbox mode
      * @return self
      */
     function __construct($optParams) 
