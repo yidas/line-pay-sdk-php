@@ -127,9 +127,9 @@ This library requires the following:
 
 ### Authentication
 
-Each LINE Pay merchant Requires authentication information for LINE Pay integration is as below.
-- channel id
-- channel secret key
+Each LINE Pay merchant Requires authentication information for LINE Pay integration, as shown below:
+- channel ID
+- channel Secret
 
 To get an LINE Pay Authentication:
 
@@ -166,7 +166,7 @@ Before using any API methods, first you need to create a Client with configurati
 
 ### Client
 
-Create a LINE Pay Client with [API Authentication](#api-authentication):
+Create a LINE Pay Client with [API Authentication](#authentication):
 
 ```php
 $linePay = new \yidas\linePay\Client([
@@ -258,8 +258,8 @@ For Web integration. Merchant will requests a payment and generates payment URL(
 
 > Flow: [`Request`](#request-api) -> [`Confirm`](#confirm-api) -> [`Details`](#payment-details-api) -> [`Refund`](#refund-api)
 
-![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete.png)
-![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete.png)
+![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete-6cf400a6.png)
+![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete-a7d70e88.png)
 
 #### Payment Details API
 
@@ -546,7 +546,7 @@ $response = $linePay->authorizations([
 ---
 
 EXCEPTIONS
-==========
+----------
 
 Client throws exceptions for errors that occur during a API transaction.
 
@@ -569,7 +569,7 @@ try {
 ---
 
 RESOURCES
-=========
+---------
 
 **[LINE Pay Online API v3 Guide (EN)](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)**
 
@@ -586,6 +586,6 @@ RESOURCES
 ---
 
 REFERENCES
-==========
+----------
 
 [LINE Pay Developers - APIs](https://pay.line.me/tw/developers/apis/apis?locale=en_US)
