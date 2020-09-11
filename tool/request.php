@@ -45,11 +45,6 @@ $orderParams = [
         "confirmUrl" => "{$baseUrl}/confirm.php",
         "cancelUrl" => "{$baseUrl}/index.php",
     ],
-    "options" => [  
-        "display" => [
-            "checkConfirmUrlBrowser" => true,
-        ],
-    ],
 ];
 
 // Capture: false
@@ -81,6 +76,10 @@ if ($input['confirmUrlType']) {
 // Display locale
 if ($input['locale']) {
     $orderParams['options']['display']['locale'] = $input['locale'];
+}
+// checkConfirmUrlBrowser
+if ($input['checkConfirmUrlBrowser']) {
+    $orderParams['options']['display']['checkConfirmUrlBrowser'] = true;
 }
 // PaymentUrl type
 $paymentUrlType = (isset($input['paymenUrlApp'])) ? 'app' : 'web';

@@ -281,6 +281,10 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           </select>
         </div>
         <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputCheckConfirmUrlBrowser" name="checkConfirmUrlBrowser" <?=!$config || (isset($config['checkConfirmUrlBrowser']) && $config['checkConfirmUrlBrowser']) ? 'checked' : ''?>>
+          <label class="form-check-label" for="inputCheckConfirmUrlBrowser">checkConfirmUrlBrowser: <code>true</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
+        </div>
+        <div class="form-check">
           <input type="checkbox" class="form-check-input" id="inputPaymentUrlApp" name="paymenUrlApp" <?=isset($config['paymenUrlApp']) ? 'checked' : ''?>>
           <label class="form-check-label" for="inputPaymentUrlApp">paymentUrl: <code>app</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
         </div>
