@@ -30,7 +30,7 @@ $orderParams = [
     'amount' => (integer) $input['amount'],
     'currency' => $input['currency'],
 	'orderId' => $orderId,
-	'oneTimeKey' => $input['otk'],
+    'oneTimeKey' => $input['otk'],
 ];
 
 // Capture: false
@@ -46,6 +46,15 @@ if (is_numeric($input['useLimit']) || is_numeric($input['rewardLimit'])) {
     $orderParams['extras']['promotionRestriction']['useLimit'] = ($input['useLimit']) ? $input['useLimit'] : 0;
     $orderParams['extras']['promotionRestriction']['rewardLimit'] = ($input['rewardLimit']) ? $input['rewardLimit'] : 0;
 }
+// Events Code
+if (isset($input['eventsCode'][0])) {
+    for ($i=0; $i < count($input['eventsCode']); $i++) { 
+        $orderParams['extras']['events'][$i]['code'] = ($input['eventsCode'][$i]) ? $input['eventsCode'][$i] : "";
+        $orderParams['extras']['events'][$i]['totalAmount'] = ($input['eventsTotalAmount'][$i]) ? (integer) $input['eventsTotalAmount'][$i] : 0;
+        $orderParams['extras']['events'][$i]['productQuantity'] = ($input['eventsProductQuantity'][$i]) ? (integer) $input['eventsProductQuantity'][$i] : 0;
+    }
+}
+
 // Request Body Rewriting
 $orderParams = ($input['requestBody']) ? json_decode($input['requestBody'], true) : $orderParams;
 
