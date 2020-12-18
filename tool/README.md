@@ -63,6 +63,7 @@ return [
 ]
 ```
 
+> Warning: Saved merchants will be operated by the tool through the API with the merchant credentials, please add the sandbox merchant account only.
 
 
 
