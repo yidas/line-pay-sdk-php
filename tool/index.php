@@ -315,7 +315,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
         <hr>
         <div class="form-group">
-          <label>Search Transaction <font color="#cccccc"><i>(Effective with Custom merchant & Sandbox setting)</i></font></label>
+          <label>Search Transaction</label>
           <div class="input-group">
             <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
             <div class="input-group-append">

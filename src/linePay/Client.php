@@ -47,6 +47,7 @@ class Client
         'ordersCapture' => '/v2/payments/orders/{orderId}/capture',
         'ordersRefund' => '/v2/payments/orders/{orderId}/refund',
         'authorizations' => '/v2/payments/authorizations',
+        'detailsV2' => '/v2/payments',
     ];
 
     /**
@@ -213,11 +214,14 @@ class Client
      * Get payment details
      *
      * @param array $queryParams
+     * @param string $version API version
      * @return yidas\linePay\Response
      */
-    public function details($queryParams)
-    {
-        return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams, null, [
+    public function details($queryParams, $version="v3")
+    {   
+        $version = ($version == "v2") ? $version : "v3";
+        $apiUrl = ($version == "v2") ? self::$apiUris['detailsV2'] : self::$apiUris['details'];
+        return $this->requestHandler($version, 'GET', $apiUrl, $queryParams, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
