@@ -72,6 +72,13 @@ try {
         die("<script>alert('ErrorCode {$response['returnCode']}: {$response['returnMessage']}');history.back();</script>");
     }
 
+    // Detail v2 API for easily checking log
+    $resForLog = $linePay->details([
+        'transactionId' => $response["info"]["transactionId"],
+    ], 'v2');
+    // Log
+    saveLog('Payment Details API', $resForLog); 
+
 } catch(ConnectException $e) {
     
     // Log

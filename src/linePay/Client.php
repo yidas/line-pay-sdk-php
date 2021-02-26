@@ -374,7 +374,7 @@ class Client
      */
     public function preapprovedCheck($regKey, $queryParams=null)
     {
-        return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), null, $queryParams, [
+        return $this->requestHandler('v3', 'GET', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedCheck']), $queryParams, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
