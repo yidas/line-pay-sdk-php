@@ -17,13 +17,26 @@ $linePay = new \yidas\linePay\Client([
 
 // Successful page URL
 $successUrl = './index.php?route=order';
-// Get the transactionId from query parameters
-$transactionId = (string) $_GET['transactionId'];
-// Get the order from session
-$order = $_SESSION['linePayOrder'];
 
-// Check Payment Status API
-$response = $linePay->check($transactionId);
+if (isset($_GET['transactionId'])) {
+
+    // Get the transactionId from query parameters
+    $transactionId = (string) $_GET['transactionId'];
+
+    // Check Payment Status API v3
+    $response = $linePay->check($transactionId);
+}
+else if (isset($_GET['orderId'])) {
+
+    // Get the orderId from query parameters
+    $orderId = (string) $_GET['orderId'];
+
+    // Check Payment Status API v2
+    $response = $linePay->ordersCheck($orderId);
+}
+else {
+    die("<script>alert('Require transaction or order ID');history.back();</script>");
+}
 
 // Log
 saveLog('Check Payment Status API', $response);

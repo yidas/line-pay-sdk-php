@@ -63,7 +63,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         else if (form.transactionId.value) {
           form.action = "details.php";
         }
-        form.form.submit();
+        form.submit();
         return;
       }
     </script>
@@ -281,6 +281,10 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           </select>
         </div>
         <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="inputCheckConfirmUrlBrowser" name="checkConfirmUrlBrowser" <?=!$config || (isset($config['checkConfirmUrlBrowser']) && $config['checkConfirmUrlBrowser']) ? 'checked' : ''?>>
+          <label class="form-check-label" for="inputCheckConfirmUrlBrowser">checkConfirmUrlBrowser: <code>true</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
+        </div>
+        <div class="form-check">
           <input type="checkbox" class="form-check-input" id="inputPaymentUrlApp" name="paymenUrlApp" <?=isset($config['paymenUrlApp']) ? 'checked' : ''?>>
           <label class="form-check-label" for="inputPaymentUrlApp">paymentUrl: <code>app</code> <font color="#cccccc"><i>(Online Only)</i></font></label>
         </div>
@@ -299,8 +303,19 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <input type="number" name="rewardLimit" class="form-control" placeholder="options.extra.promotionRestriction.rewardLimit">
         </div>
         <hr>
+        <div class="row">
+          <div class="col col-9 col-md-9">
+            <label>Events Code: <code>events</code> <font color="#cccccc"><i>(Offline Only)</i></font></label>
+          </div>
+          <div class="col col-3 col-md-3">
+            <button class="btn btn-sm btn-outline-secondary float-right btn-events-code-add" type="button">Add</button>
+          </div>
+        </div>
+        <div id="eventsCodeBlock">
+        </div>
+        <hr>
         <div class="form-group">
-          <label>Search Transaction <font color="#cccccc"><i>(Effective with Custom merchant & Sandbox setting)</i></font></label>
+          <label>Search Transaction</label>
           <div class="input-group">
             <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
             <div class="input-group-append">
@@ -342,6 +357,29 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
       </div>
     </div>
   </form>
+
+  <!-- Template -->
+  <script type="text/template" id="eventsCodeTemplate">
+    <div class="input-group input-group-sm">
+      <div class="input-group-prepend">
+        <span class="input-group-text" style="min-width: 120px;">Code</span>
+      </div>
+      <input type="text" name="eventsCode[]" class="form-control" placeholder="extras.events.code">
+    </div>
+    <div class="input-group input-group-sm">
+      <div class="input-group-prepend">
+        <span class="input-group-text" style="min-width: 120px;">TotalAmount</span>
+      </div>
+      <input type="number" name="eventsTotalAmount[]" class="form-control" placeholder="extras.events.totalAmount">
+    </div>
+    <div class="input-group input-group-sm">
+      <div class="input-group-prepend">
+        <span class="input-group-text" style="min-width: 120px;">Quantity</span>
+      </div>
+      <input type="number" name="eventsProductQuantity[]" class="form-control" placeholder="extras.events.productQuantity">
+    </div>
+  </script>
+  <!-- /Template -->
 
   <?php endif ?>
 
@@ -410,7 +448,12 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
     });
   }
 
-  <?php if($merchant && (!$config || isset($config['merchant']))): ?>
+  // EventCode Add Button
+  $(".btn-events-code-add").click(function () {
+    $("#eventsCodeBlock").append($("#eventsCodeTemplate").html()).append("<br>");
+  });
+
+  <?php if($merchants && (!$config || isset($config['merchant']))): ?>
   // Action for merchant config condition
   $(".merchant-block[data-block-id='custom']").find(".btn-merchant-switch").click();
   <?php endif ?>

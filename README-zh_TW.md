@@ -540,7 +540,7 @@ $response = $linePay->authorizations([
 ---
 
 EXCEPTIONS
-==========
+----------
 
 Client會在API串接處理期間發生錯誤時拋出異常。
 
@@ -562,7 +562,7 @@ try {
 ---
 
 外部資源
-=========
+-------
 
 **[LINE Pay Online API v3 整合指南 (TW)](https://pay.line.me/tw/developers/apis/onlineApis?locale=zh_TW)**
 
@@ -577,6 +577,6 @@ try {
 ---
 
 參考
-==========
+----
 
 [LINE Pay Developers - APIs](https://pay.line.me/tw/developers/apis/apis?locale=zh_TW)

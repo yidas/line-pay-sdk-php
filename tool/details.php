@@ -4,9 +4,11 @@ require __DIR__ . '/_config.php';
 
 $input = $_POST;
 $input['isSandbox'] = (isset($input['isSandbox'])) ? true : false;
-// Custom merchant only for security
+// Merchant config option
 if (isset($input['merchant'])) {
-    die("<script>alert('Custom merchant input only!');history.back();</script>");
+    $merchant = Merchant::getMerchant($input['merchant']);
+    $input['channelId'] = $merchant['channelId'];
+    $input['channelSecret'] = $merchant['channelSecret'];
 }
 
 // Create LINE Pay client
@@ -19,7 +21,7 @@ $linePay = new \yidas\linePay\Client([
 // Use Order Check API to confirm the transaction
 $response = $linePay->details([
     'transactionId' => $input['transactionId'],
-]);
+], "v2");
 
 // Log
 saveLog('Payment Details API', $response);
