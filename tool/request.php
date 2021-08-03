@@ -29,7 +29,7 @@ $orderParams = [
     "packages" => [
         [
             "id" => "pid",
-            "amount" => (integer) $input['amount'],
+            "amount" => (float) $input['amount'],
             "name" => "Package Name",
             "products" => [
                 [
