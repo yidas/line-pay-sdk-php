@@ -204,7 +204,7 @@ Response object provides response body data accessing by object attributes or ar
 // Get LINE Pay results code from response
 $returnCode = $response->returnCode;
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response->info->payinfo;
+$payInfo = $response->info->payInfo;
 ```
 
 ##### Retrieving as Array
@@ -213,7 +213,7 @@ $payinfo = $response->info->payinfo;
 // Get LINE Pay results code from response
 $returnCode = $response['returnCode'];
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response['info']['payinfo'];
+$payInfo = $response['info']['payInfo'];
 ```
 
 #### Methods
