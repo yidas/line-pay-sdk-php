@@ -201,19 +201,23 @@ Response object provides response body data accessing by object attributes or ar
 ##### Retrieving as Object
 
 ```php
+// Get object of response body
+$bodyObject = response->toObject();
 // Get LINE Pay results code from response
 $returnCode = $response->returnCode;
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response->info->payinfo;
+$payInfo = $response->info->payInfo;
 ```
 
 ##### Retrieving as Array
 
 ```php
+// Get array of response body
+$bodyArray = response->toArray();
 // Get LINE Pay results code from response
 $returnCode = $response['returnCode'];
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response['info']['payinfo'];
+$payInfo = $response['info']['payInfo'];
 ```
 
 #### Methods
