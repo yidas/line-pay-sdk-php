@@ -203,7 +203,7 @@ Response物件提供用陣列或物件的方式來取得回傳資料：
 // Get LINE Pay results code from response
 $returnCode = $response->returnCode;
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response->info->payinfo;
+$payInfo = $response->info->payInfo;
 ```
 
 ##### 取得為陣列
@@ -212,7 +212,7 @@ $payinfo = $response->info->payinfo;
 // Get LINE Pay results code from response
 $returnCode = $response['returnCode'];
 // Get LINE Pay info.payInfo[] from response
-$payinfo = $response['info']['payinfo'];
+$payInfo = $response['info']['payInfo'];
 ```
 
 #### 方法
