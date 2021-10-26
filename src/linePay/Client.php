@@ -160,7 +160,7 @@ class Client
      * @param array $options
      * @return yidas\linePay\Response
      */
-    protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
+    public function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
     {
         // Headers
         $headers = [];
