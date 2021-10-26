@@ -200,6 +200,8 @@ Response物件提供用陣列或物件的方式來取得回傳資料：
 ##### 取得為物件
 
 ```php
+// Get object of response body
+$bodyObject = response->toObject();
 // Get LINE Pay results code from response
 $returnCode = $response->returnCode;
 // Get LINE Pay info.payInfo[] from response
@@ -209,6 +211,8 @@ $payInfo = $response->info->payInfo;
 ##### 取得為陣列
 
 ```php
+// Get array of response body
+$bodyArray = response->toArray();
 // Get LINE Pay results code from response
 $returnCode = $response['returnCode'];
 // Get LINE Pay info.payInfo[] from response

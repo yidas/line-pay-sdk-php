@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.5.1
+ * @version 3.6.0
  */
 class Client
 {
@@ -160,7 +160,7 @@ class Client
      * @param array $options
      * @return yidas\linePay\Response
      */
-    protected function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
+    public function requestHandler($version, $method, $uri, $queryParams=null, $bodyParams=null, $options=[])
     {
         // Headers
         $headers = [];
