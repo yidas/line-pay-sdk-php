@@ -59,6 +59,14 @@ if (isset($input['preapproved'])) {
 if ($input['branchName']) {
     $orderParams['options']['extra']['branchName'] = $input['branchName'];
 }
+// ConfirmUrl
+if ($input['confirmUrl']) {
+    $orderParams['redirectUrls']['confirmUrl'] = $input['confirmUrl'];
+}
+// CancelUrl
+if ($input['cancelUrl']) {
+    $orderParams['redirectUrls']['cancelUrl'] = $input['cancelUrl'];
+}
 // ConfirmUrlType
 if ($input['confirmUrlType']) {
     $orderParams['redirectUrls']['confirmUrlType'] = $input['confirmUrlType'];
