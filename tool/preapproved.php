@@ -17,6 +17,7 @@ $linePay = new \yidas\linePay\Client([
     'channelId' => $input['channelId'],
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
+    'merchantDeviceProfileId' => $input['merchantDeviceProfileId'],
 ]);
 
 // Create an order based on Reserve API parameters
