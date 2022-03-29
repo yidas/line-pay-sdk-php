@@ -241,6 +241,18 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
             </div>
             <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
           </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 120px;">ConfirmUrl</span>
+            </div>
+            <input type="text" name="confirmUrl" class="form-control" placeholder="Fill in to overwrite confirmUrl (Online Only)">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 120px;">CancelUrl</span>
+            </div>
+            <input type="text" name="cancelUrl" class="form-control" placeholder="Fill in to overwrite cancelUrl (Online Only)">
+          </div>
         </div>
         <hr>
         <div class="input-group input-group-sm">

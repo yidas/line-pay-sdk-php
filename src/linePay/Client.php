@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.6.0
+ * @version 3.7.0
  */
 class Client
 {
@@ -72,6 +72,13 @@ class Client
     protected $channelSecret;
 
     /**
+     * Saved whether to use milliseconds unixTime as LINE Pay X-LINE-Authorization-Nonce
+     *
+     * @var boolean
+     */
+    protected $useUnixTimeNonce;
+
+    /**
      * Constructor
      *
      * @param string|array $optParams API Key or option parameters
@@ -88,6 +95,8 @@ class Client
         $merchantDeviceType = isset($optParams['merchantDeviceType']) ? $optParams['merchantDeviceType'] : null;
         $merchantDeviceProfileId = isset($optParams['merchantDeviceProfileId']) ? $optParams['merchantDeviceProfileId'] : null;
         $isSandbox = isset($optParams['isSandbox']) ? $optParams['isSandbox'] : false;
+        $debug = isset($optParams['debug']) ? $optParams['debug'] : false;
+        $this->useUnixTimeNonce = isset($optParams['useUnixTimeNonce']) ? $optParams['useUnixTimeNonce'] : false;
 
         // Check
         if (!$channelId || !$channelSecret) {
@@ -119,6 +128,7 @@ class Client
             // 'timeout'  => 6.0,
             'headers' => $headers,
             'http_errors' => false,
+            'debug' => $debug,
         ]);
 
         return $this;
@@ -188,7 +198,7 @@ class Client
             case 'v3':
             default:
                 // V3 API Authentication
-                $authNonce = date('c') . uniqid('-'); // ISO 8601 date + UUID 1
+                $authNonce = ($this->useUnixTimeNonce) ? round(microtime(true) * 1000) : date('c') . uniqid('-'); // ISO 8601 date + UUID 1
                 $authParams = ($method=='GET' && $queryParams) ? $queryString : (($bodyParams) ? $body : null);
                 $headers['X-LINE-Authorization'] = self::getAuthSignature($this->channelSecret, $uri, $authParams, $authNonce);
                 $headers['X-LINE-Authorization-Nonce'] = $authNonce;

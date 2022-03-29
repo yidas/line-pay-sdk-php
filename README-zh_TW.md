@@ -260,8 +260,8 @@ if (!$response->isSuccessful()) {
 
 > 流程: [`付款Request`](#付款request-api) -> [`付款Confirm`](#付款confirm-api) -> [`取得查看付款紀錄`](#取得查看付款紀錄-api) -> [`退款`](#退款-api)
 
-![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete.png)
-![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete.png)
+![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete-6cf400a6.png)
+![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete-a7d70e88.png)
 
 #### 取得查看付款紀錄 API
 
