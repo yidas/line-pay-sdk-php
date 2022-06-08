@@ -78,7 +78,7 @@ if ($input['confirmUrlType']) {
             "currency" => $orderParams['currency'],
             "isSandbox" => $input['isSandbox'] ? "true" : "false",
         ];
-        $orderParams['redirectUrls']['confirmUrl'] = "{$baseUrl}/confirm-server.php?" . http_build_query($confirmServerData);
+        $orderParams['redirectUrls']['confirmUrl'] = ($input['confirmUrl']) ? $input['confirmUrl'] : "{$baseUrl}/confirm-server.php?" . http_build_query($confirmServerData);
     }
 }
 // Display locale
