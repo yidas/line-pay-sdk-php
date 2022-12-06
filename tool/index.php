@@ -317,7 +317,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <hr>
         <div class="row">
           <div class="col col-9 col-md-9">
-            <label>Events Code: <code>events</code> <font color="#cccccc"><i>(Offline Only)</i></font></label>
+            <label>Events Code: <code>events</code> <font color="#cccccc"><i></i></font></label>
           </div>
           <div class="col col-3 col-md-3">
             <button class="btn btn-sm btn-outline-secondary float-right btn-events-code-add" type="button">Add</button>
