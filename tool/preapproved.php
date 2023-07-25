@@ -25,7 +25,7 @@ $orderParams = [
     "productName" => $input['productName'],
     "amount" => (integer) $input['amount'],
     "currency" => $input['currency'],
-    "orderId" => "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3),
+    "orderId" => ($input['orderId']) ? $input['orderId'] : "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3),
 ];
 
 // Capture: false
