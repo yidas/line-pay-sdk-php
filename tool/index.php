@@ -194,9 +194,55 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
       </div>
       <div class="col col-8 text-right">
+        <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSignatureTool">Signature Tool</a>
+        |
         <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMoreSettings">More Settings</a>
         |
         <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Logs</a>
+      </div>
+    </div>
+    <div class="collapse" id="collapseSignatureTool">
+      <div class="card card-body">
+        <div class="form-group">
+          <label>X-LINE-Authorization Signature Generator</label>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">ChannelSecret</span>
+            </div>
+            <input type="text" name="signature-secret" class="form-control" placeholder="Merchant's ChannelSecret">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">URL Path</span>
+            </div>
+            <input type="text" name="signature-path" class="form-control" value="/v3/payments/request" placeholder="URL Path from the API">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">Nonce</span>
+            </div>
+            <input type="text" name="signature-nonce" class="form-control" placeholder="Nonce for each API request">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">Body / Query String</span>
+            </div>
+            <input type="text" name="signature-body" class="form-control" placeholder="RequestBody for POST method / Query String for GET method">
+          </div>
+          <div class="input-group">
+            <input type="text" class="form-control" name="signature-value" placeholder="X-LINE-Authorization Signature will be generated here">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary btn-sinature-generate" type="button">Generate</button>
+            </div>
+          </div>
+          <hr>
+          <blockquote class="blockquote md-0" style="font-size: 12px;">
+          <p><b>HTTP Method : GET</b></p>
+          <p>Signature = Base64(HMAC-SHA256(Your ChannelSecret, (Your ChannelSecret + URL Path + Query String + nonce)))<br>Query String : A query string except <code>?</code> (Example: Name1=Value1&Name2=Value2...)</p>
+          <p><b>HTTP Method : POST</b></p>
+          <p>Signature = Base64(HMAC-SHA256(Your ChannelSecret, (Your ChannelSecret + URL Path + RequestBody + nonce)))</p>
+          </blockquote>
+        </div>
       </div>
     </div>
     <div class="collapse" id="collapseMoreSettings">
@@ -433,6 +479,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
 </div>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js" integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
   // Merchant config block
@@ -469,6 +516,17 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
   // Action for merchant config condition
   $(".merchant-block[data-block-id='custom']").find(".btn-merchant-switch").click();
   <?php endif ?>
+
+  // Singature Tool
+  $(".btn-sinature-generate").click(function () {
+    var secret = $("[name='signature-secret']").val();
+    var path = $("[name='signature-path']").val();
+    var body = $("[name='signature-body']").val();
+    var nonce = $("[name='signature-nonce']").val();
+    var signature = CryptoJS.HmacSHA256(secret + path + body + nonce, secret).toString(CryptoJS.enc.Base64);
+    $("[name='signature-value']").val(signature);
+  });
+
 </script>
 </body>
 </html>
