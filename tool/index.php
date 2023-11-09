@@ -207,9 +207,9 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>X-LINE-Authorization Signature Generator</label>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 150px;">ChannelSecret</span>
+              <span class="input-group-text" style="min-width: 150px;">Channel Secret</span>
             </div>
-            <input type="text" name="signature-secret" class="form-control" placeholder="Merchant's ChannelSecret">
+            <input type="text" name="signature-secret" class="form-control" placeholder="Merchant's Channel Secret">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
