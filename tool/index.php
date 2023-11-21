@@ -58,7 +58,18 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           form.action = "onetimekeys-pay.php";
         }
         else if (form.useRegKey.checked) {
-          form.action = (form.preapprovedAction.value=='pay') ? "preapproved.php" : "preapproved-check.php";
+          switch (form.preapprovedAction.value) {
+            case 'pay':
+              form.action = "preapproved.php";
+              break;
+            case 'checkAuth':
+              form.action = "preapproved-check.php?creditCardAuth=true";
+              break;
+            case 'check':
+            default:
+              form.action = "preapproved-check.php";
+              break;
+          }
         }
         else if (form.transactionId.value) {
           form.action = "details.php";
@@ -260,6 +271,10 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
             <div class="form-check">
               <input type="radio" class="form-check-input" id="inputPreapprovedCheck" name="preapprovedAction" value="check">
               <label class="form-check-label" for="inputPreapprovedCheck">Check <code>regKey</code> <font color="#cccccc"><i>Default</i></font></label>
+            </div>
+            <div class="form-check">
+            <input type="radio" class="form-check-input" id="inputPreapprovedCheckAuth" name="preapprovedAction" value="checkAuth">
+              <label class="form-check-label" for="inputPreapprovedCheckAuth">Check <code>regKey</code> with <code>creditCardAuth</code></label>
             </div>
             <div class="form-check">
               <input type="radio" class="form-check-input" id="inputPreapprovedPay" name="preapprovedAction" value="pay">

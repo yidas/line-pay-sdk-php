@@ -20,7 +20,7 @@ $linePay = new \yidas\linePay\Client([
 ]);
 
 // Online Reserve API
-$response = $linePay->preapprovedCheck($input['regKey']);
+$response = $linePay->preapprovedCheck($input['regKey'], $_GET);
 
 // Log
 saveLog('Preapproved Check API', $response, true);
