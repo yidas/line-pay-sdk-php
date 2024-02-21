@@ -74,6 +74,9 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         else if (form.transactionId.value) {
           form.action = "details.php";
         }
+        else if (form.transactionIdForUserInfo.value) {
+          form.action = "get-user-info.php";
+        }
         form.submit();
         return;
       }
@@ -391,6 +394,16 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Search Transaction</label>
           <div class="input-group">
             <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">Submit</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="form-group">
+          <label>Get User Info</label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="transactionIdForUserInfo" placeholder="Input transactionId to search">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="submit">Submit</button>
             </div>

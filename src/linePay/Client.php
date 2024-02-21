@@ -41,6 +41,7 @@ class Client
         'preapproved' => '/v3/payments/preapprovedPay/{regKey}/payment',
         'preapprovedCheck' => '/v3/payments/preapprovedPay/{regKey}/check',  
         'preapprovedExpire' => '/v3/payments/preapprovedPay/{regKey}/expire',
+        'getUserInfo' => '/v3/payments/{transactionId}/userInfo',
         'oneTimeKeysPay' => '/v2/payments/oneTimeKeys/pay',
         'ordersCheck' => '/v2/payments/orders/{orderId}/check',
         'ordersVoid' => '/v2/payments/orders/{orderId}/void',
@@ -400,6 +401,20 @@ class Client
     public function preapprovedExpire($regKey, $bodyParams=null)
     {
         return $this->requestHandler('v3', 'POST', str_replace('{regKey}', $regKey, self::$apiUris['preapprovedExpire']), null, $bodyParams, [
+            'connect_timeout' => 5,
+            'timeout' => 20,
+            ]);
+    }
+
+    /**
+     * Get User Info API
+     *
+     * @param integer $transactionId
+     * @return yidas\linePay\Response
+     */
+    public function getUserInfo($transactionId)
+    {
+        return $this->requestHandler('v3', 'GET', str_replace('{transactionId}', $transactionId, self::$apiUris['getUserInfo']), null, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
