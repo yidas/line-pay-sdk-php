@@ -295,27 +295,33 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Overwrite Fields</label>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">OrderId</span>
+              <span class="input-group-text" style="min-width: 135px;">OrderId</span>
             </div>
             <input type="text" name="orderId" class="form-control" placeholder="Fill in to overwrite orderId">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">ImageUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">ImageUrl</span>
             </div>
             <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">ConfirmUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">ConfirmUrl</span>
             </div>
             <input type="text" name="confirmUrl" class="form-control" placeholder="Fill in to overwrite confirmUrl (Online Only)">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">CancelUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">CancelUrl</span>
             </div>
             <input type="text" name="cancelUrl" class="form-control" placeholder="Fill in to overwrite cancelUrl (Online Only)">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 135px;">appPackageName</span>
+            </div>
+            <input type="text" name="appPackageName" class="form-control" placeholder="redirectUrls.appPackageName (Online Only)">
           </div>
         </div>
         <hr>

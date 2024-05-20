@@ -67,6 +67,10 @@ if ($input['confirmUrl']) {
 if ($input['cancelUrl']) {
     $orderParams['redirectUrls']['cancelUrl'] = $input['cancelUrl'];
 }
+// appPackageName
+if ($input['appPackageName']) {
+    $orderParams['redirectUrls']['appPackageName'] = $input['appPackageName'];
+}
 // ConfirmUrlType
 if ($input['confirmUrlType']) {
     $orderParams['redirectUrls']['confirmUrlType'] = $input['confirmUrlType'];

@@ -33,6 +33,15 @@ if (isset($input['captureFalse'])) {
     $orderParams['capture'] = false;
 }
 
+// Events Code
+if (isset($input['eventsCode'][0])) {
+    for ($i=0; $i < count($input['eventsCode']); $i++) { 
+        $orderParams['options']['events'][$i]['code'] = ($input['eventsCode'][$i]) ? $input['eventsCode'][$i] : "";
+        $orderParams['options']['events'][$i]['totalAmount'] = ($input['eventsTotalAmount'][$i]) ? (integer) $input['eventsTotalAmount'][$i] : 0;
+        $orderParams['options']['events'][$i]['productQuantity'] = ($input['eventsProductQuantity'][$i]) ? (integer) $input['eventsProductQuantity'][$i] : 0;
+    }
+}
+
 // Online Reserve API
 $response = $linePay->preapproved($input['regKey'], $orderParams);
 
