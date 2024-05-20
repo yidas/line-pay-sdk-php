@@ -58,10 +58,24 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           form.action = "onetimekeys-pay.php";
         }
         else if (form.useRegKey.checked) {
-          form.action = (form.preapprovedAction.value=='pay') ? "preapproved.php" : "preapproved-check.php";
+          switch (form.preapprovedAction.value) {
+            case 'pay':
+              form.action = "preapproved.php";
+              break;
+            case 'checkAuth':
+              form.action = "preapproved-check.php?creditCardAuth=true";
+              break;
+            case 'check':
+            default:
+              form.action = "preapproved-check.php";
+              break;
+          }
         }
         else if (form.transactionId.value) {
           form.action = "details.php";
+        }
+        else if (form.transactionIdForUserInfo.value) {
+          form.action = "get-user-info.php";
         }
         form.submit();
         return;
@@ -194,9 +208,55 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
       </div>
       <div class="col col-8 text-right">
+        <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSignatureTool">Signature Tool</a>
+        |
         <a href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMoreSettings">More Settings</a>
         |
         <a href="javascript:void(0);" data-toggle="modal" data-target="#logModal">View Logs</a>
+      </div>
+    </div>
+    <div class="collapse" id="collapseSignatureTool">
+      <div class="card card-body">
+        <div class="form-group">
+          <label>X-LINE-Authorization Signature Generator</label>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">Channel Secret</span>
+            </div>
+            <input type="text" name="signature-secret" class="form-control" placeholder="Merchant's Channel Secret">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">URL Path</span>
+            </div>
+            <input type="text" name="signature-path" class="form-control" value="/v3/payments/request" placeholder="URL Path from the API">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">Nonce</span>
+            </div>
+            <input type="text" name="signature-nonce" class="form-control" placeholder="Nonce for each API request">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 150px;">Body / Query String</span>
+            </div>
+            <input type="text" name="signature-body" class="form-control" placeholder="RequestBody for POST method / Query String for GET method">
+          </div>
+          <div class="input-group">
+            <input type="text" class="form-control" name="signature-value" placeholder="X-LINE-Authorization Signature will be generated here">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary btn-sinature-generate" type="button">Generate</button>
+            </div>
+          </div>
+          <hr>
+          <blockquote class="blockquote md-0" style="font-size: 12px;">
+          <p><b>HTTP Method : GET</b></p>
+          <p>Signature = Base64(HMAC-SHA256(Your ChannelSecret, (Your ChannelSecret + URL Path + Query String + nonce)))<br>Query String : A query string except <code>?</code> (Example: Name1=Value1&Name2=Value2...)</p>
+          <p><b>HTTP Method : POST</b></p>
+          <p>Signature = Base64(HMAC-SHA256(Your ChannelSecret, (Your ChannelSecret + URL Path + RequestBody + nonce)))</p>
+          </blockquote>
+        </div>
       </div>
     </div>
     <div class="collapse" id="collapseMoreSettings">
@@ -216,6 +276,10 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
               <label class="form-check-label" for="inputPreapprovedCheck">Check <code>regKey</code> <font color="#cccccc"><i>Default</i></font></label>
             </div>
             <div class="form-check">
+            <input type="radio" class="form-check-input" id="inputPreapprovedCheckAuth" name="preapprovedAction" value="checkAuth">
+              <label class="form-check-label" for="inputPreapprovedCheckAuth">Check <code>regKey</code> with <code>creditCardAuth</code></label>
+            </div>
+            <div class="form-check">
               <input type="radio" class="form-check-input" id="inputPreapprovedPay" name="preapprovedAction" value="pay">
               <label class="form-check-label" for="inputPreapprovedPay">Pay preapproved by <code>regKey</code></label>
             </div>
@@ -231,27 +295,33 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Overwrite Fields</label>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">OrderId</span>
+              <span class="input-group-text" style="min-width: 135px;">OrderId</span>
             </div>
             <input type="text" name="orderId" class="form-control" placeholder="Fill in to overwrite orderId">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">ImageUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">ImageUrl</span>
             </div>
             <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">ConfirmUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">ConfirmUrl</span>
             </div>
             <input type="text" name="confirmUrl" class="form-control" placeholder="Fill in to overwrite confirmUrl (Online Only)">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
-              <span class="input-group-text" style="min-width: 120px;">CancelUrl</span>
+              <span class="input-group-text" style="min-width: 135px;">CancelUrl</span>
             </div>
             <input type="text" name="cancelUrl" class="form-control" placeholder="Fill in to overwrite cancelUrl (Online Only)">
+          </div>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="min-width: 135px;">appPackageName</span>
+            </div>
+            <input type="text" name="appPackageName" class="form-control" placeholder="redirectUrls.appPackageName (Online Only)">
           </div>
         </div>
         <hr>
@@ -317,7 +387,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <hr>
         <div class="row">
           <div class="col col-9 col-md-9">
-            <label>Events Code: <code>events</code> <font color="#cccccc"><i>(Offline Only)</i></font></label>
+            <label>Events Code: <code>events</code> <font color="#cccccc"><i></i></font></label>
           </div>
           <div class="col col-3 col-md-3">
             <button class="btn btn-sm btn-outline-secondary float-right btn-events-code-add" type="button">Add</button>
@@ -330,6 +400,16 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
           <label>Search Transaction</label>
           <div class="input-group">
             <input type="text" class="form-control" name="transactionId" placeholder="Input transactionId to search">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">Submit</button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="form-group">
+          <label>Get User Info</label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="transactionIdForUserInfo" placeholder="Input transactionId to search">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="submit">Submit</button>
             </div>
@@ -433,6 +513,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
 </div>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js" integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
   // Merchant config block
@@ -469,6 +550,17 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
   // Action for merchant config condition
   $(".merchant-block[data-block-id='custom']").find(".btn-merchant-switch").click();
   <?php endif ?>
+
+  // Singature Tool
+  $(".btn-sinature-generate").click(function () {
+    var secret = $("[name='signature-secret']").val();
+    var path = $("[name='signature-path']").val();
+    var body = $("[name='signature-body']").val();
+    var nonce = $("[name='signature-nonce']").val();
+    var signature = CryptoJS.HmacSHA256(secret + path + body + nonce, secret).toString(CryptoJS.enc.Base64);
+    $("[name='signature-value']").val(signature);
+  });
+
 </script>
 </body>
 </html>

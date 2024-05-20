@@ -6,7 +6,7 @@ namespace yidas\linePay;
  * LINE Pay Response
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @since   3.0.0
+ * @since   3.7.0
  */
 class Response implements \ArrayAccess
 {
@@ -200,6 +200,7 @@ class Response implements \ArrayAccess
      * @param mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value) 
     {
         trigger_error("Cannot set response data", E_USER_NOTICE); 
@@ -211,6 +212,7 @@ class Response implements \ArrayAccess
      * @param string $offset
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset) 
     {
         return isset($this->toArray()[$offset]);
@@ -222,6 +224,7 @@ class Response implements \ArrayAccess
      * @param string $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset) 
     {
         trigger_error("Cannot unset response data", E_USER_NOTICE); 
@@ -233,6 +236,7 @@ class Response implements \ArrayAccess
      * @param string $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset) 
     {
         $data = $this->toArray();
