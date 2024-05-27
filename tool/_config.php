@@ -9,6 +9,9 @@ session_start();
 // Vendor
 require __DIR__ . '/../vendor/autoload.php';
 
+// Execution timestamp
+$execAt = microtime(True);
+
 /**
  * Save log into logs in session
  *
@@ -17,7 +20,7 @@ require __DIR__ . '/../vendor/autoload.php';
  * @param boolean $reset
  * @return void
  */
-function saveLog($name, \yidas\linePay\Response $response, $reset=false)
+function saveLog($name, \yidas\linePay\Response $response, $reset=false, $endedAt=null)
 {
     $stats = $response->getStats();
     $request = $stats->getRequest();
@@ -27,6 +30,10 @@ function saveLog($name, \yidas\linePay\Response $response, $reset=false)
     // Content
     $requestContentArray = json_decode($request->getBody()->getContents());
     $responseContentArray = $response->toArray();
+
+    // Stats
+    $endedAt = ($endedAt) ? $endedAt : microtime(true);
+    $startedAt = $endedAt - $stats->getTransferTime();
     
     // Log
     $logs = ($reset) ? [] : $_SESSION['logs'];
@@ -38,11 +45,11 @@ function saveLog($name, \yidas\linePay\Response $response, $reset=false)
         'transferTime' => $stats->getTransferTime(),
         'request' => [
             'content' => ($requestContentArray) ? json_encode($requestContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => printDateTime($stats->requestTime),
+            'datetime' => printDateTime($startedAt),
         ],
         'response' => [
             'content' => ($responseContentArray) ? json_encode($responseContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => printDateTime($stats->responseTime),
+            'datetime' => printDateTime($endedAt),
         ],
     ];
     $_SESSION['logs'] = $logs;
@@ -56,12 +63,16 @@ function saveLog($name, \yidas\linePay\Response $response, $reset=false)
  * @param boolean $reset
  * @return void
  */
-function saveErrorLog($name, \Psr\Http\Message\RequestInterface $request, $reset=false)
+function saveErrorLog($name, \Psr\Http\Message\RequestInterface $request, $reset=false, $lastStats=null)
 {    
+    global $execAt;
+
     // Content
     $requestContentArray = json_decode($request->getBody());
-    // Timestamp trick
-    $request->timestamp = isset($request->timestamp) ? $request->timestamp : time();
+    // Timestamp
+    $endedAt = isset($lastStats['endedAt']) ? $lastStats['endedAt'] : microtime(true);
+    $startedAt = isset($lastStats['startedAt']) ? $lastStats['startedAt'] : $execAt;
+    $transferTime = $endedAt - $startedAt;
     // Log
     $logs = ($reset) ? [] : $_SESSION['logs'];
     $logs[] = [
@@ -69,14 +80,14 @@ function saveErrorLog($name, \Psr\Http\Message\RequestInterface $request, $reset
         'datetime' => date("c"), 
         'uri' => urldecode($request->getUri()),
         'method' => $request->getMethod(),
-        'transferTime' => (float) (microtime(true) - $request->timestamp),
+        'transferTime' => $transferTime,
         'request' => [
             'content' => ($requestContentArray) ? json_encode($requestContentArray, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '',
-            'datetime' => printDateTime($request->timestamp),
+            'datetime' => printDateTime($startedAt),
         ],
         'response' => [
             'content' => '',
-            'datetime' => 'Timeout',
+            'datetime' => printDateTime($endedAt) . ' *Timeout',
         ],
     ];
     $_SESSION['logs'] = $logs;

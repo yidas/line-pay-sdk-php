@@ -82,7 +82,7 @@ try {
 } catch(ConnectException $e) {
     
     // Log
-    saveErrorLog('OneTimeKeysPay API', $linePay->getRequest(), true);
+    saveErrorLog('OneTimeKeysPay API', $linePay->getRequest(), true, $linePay->getLastStats());
 
     // 2st check requst
     try {
@@ -92,7 +92,7 @@ try {
     } catch (ConnectException $e) {
 
         // Log
-        saveErrorLog('Payment Status Check API', $linePay->getRequest());
+        saveErrorLog('Payment Status Check API', $linePay->getRequest(), false, $linePay->getLastStats());
         die("<script>alert('APIs has timeout two times, please check orderId: {$orderId}');location.href='./';</script>");
     }
     

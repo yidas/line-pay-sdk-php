@@ -56,7 +56,7 @@ try {
 
     } catch (ConnectException $e) {
         
-        saveErrorLog('Details API', $linePay->getRequest());
+        saveErrorLog('Details API', $linePay->getRequest(), false, $linePay->getLastStats());
         die("<script>alert('APIs has timeout two times, please check transactionId: {$order['transactionId']}');location.href='./';</script>");
     }
 
