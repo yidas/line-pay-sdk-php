@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.7.1
+ * @version 3.8.0
  */
 class Client
 {
@@ -78,6 +78,13 @@ class Client
      * @var boolean
      */
     protected $useUnixTimeNonce;
+
+    /**
+     * The stats of the last reqeust
+     *
+     * @var array
+     */
+    protected $lastStats;
 
     /**
      * Constructor
@@ -186,8 +193,6 @@ class Client
         $options['on_stats'] = function (\GuzzleHttp\TransferStats $transferStats) use (&$stats) {
             // Assign object
             $stats = $transferStats;
-            $stats->responseTime = microtime(true);
-            $stats->requestTime = $stats->responseTime - $stats->getTransferTime();
         };
 
         switch ($version) {
@@ -208,17 +213,43 @@ class Client
 
         // Send request with PSR-7 pattern
         $this->request = new Request($method, $url, $headers, $body);
-        $this->request->timestamp = microtime(true);
+
+        // Last Stats
+        $this->lastStats = [
+            'exception' => false,
+            'startedAt' => 0,
+            'endedAt' => 0,
+            'transferTime' => 0,
+        ];
+        $this->lastStats['startedAt'] = microtime(true);
+
         try {
 
             $response = $this->httpClient->send($this->request, $options);
+            // Stats
+            $this->lastStats['endedAt'] = microtime(true);
+            $this->lastStats['transferTime'] = $this->lastStats['endedAt'] - $this->lastStats['startedAt'];
 
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
 
+            // Stats
+            $this->lastStats['endedAt'] = microtime(true);
+            $this->lastStats['transferTime'] = $this->lastStats['endedAt'] - $this->lastStats['startedAt'];
+            $this->lastStats['exception'] = 'ConnectException';
             throw new \yidas\linePay\exception\ConnectException($e->getMessage(), $this->request);
         }
 
         return new Response($response, $stats);
+    }
+
+    /**
+     * Get Last Stats
+     *
+     * @return array
+     */
+    public function getLastStats()
+    {
+        return $this->lastStats;
     }
 
     /**
