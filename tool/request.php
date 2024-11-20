@@ -91,7 +91,7 @@ if ($input['locale']) {
     $orderParams['options']['display']['locale'] = $input['locale'];
 }
 // checkConfirmUrlBrowser
-if ($input['checkConfirmUrlBrowser']) {
+if (isset($input['checkConfirmUrlBrowser'])) {
     $orderParams['options']['display']['checkConfirmUrlBrowser'] = true;
 }
 // PaymentUrl type
