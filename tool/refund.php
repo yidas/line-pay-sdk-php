@@ -26,7 +26,7 @@ if ($order['transactionId'] != $transactionId) {
 
 // Online Refund API
 $refundParams = (isset($_GET['amount']) && $_GET['amount']!="") ? ['refundAmount' => (integer) $_GET['amount']] : null;
-$response = $linePay->refund($order['transactionId'], $refundParams);
+$response = $linePay->refund($transactionId, $refundParams);
 
 // Log
 saveLog('Refund API', $response);

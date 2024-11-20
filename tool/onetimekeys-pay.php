@@ -21,6 +21,7 @@ $linePay = new Client([
     'channelSecret' => $input['channelSecret'],
     'isSandbox' => $input['isSandbox'], 
     'merchantDeviceProfileId' => $input['merchantDeviceProfileId'],
+    'subMerchantName' => $input['subMerchantName'],
 ]);
 
 // Create an order based on Reserve API parameters

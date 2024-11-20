@@ -327,19 +327,25 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         <hr>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <span class="input-group-text" style="min-width: 120px;">DeviceProfileId</span>
+            <span class="input-group-text" style="min-width: 145px;">DeviceProfileId</span>
           </div>
           <input type="text" name="merchantDeviceProfileId" class="form-control"  placeholder="X-LINE-MerchantDeviceProfileId (Alphanumeric Only)">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" style="min-width: 120px;">BranchName</label>
+            <span class="input-group-text" style="min-width: 145px;">SubMerchantName</span>
+          </div>
+          <input type="text" name="subMerchantName" class="form-control"  placeholder="X-LINE-SubMerchantName (Alphanumeric Only)">
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <label class="input-group-text" style="min-width: 145px;">BranchName</label>
           </div>
           <input type="text" name="branchName" class="form-control" id="" placeholder="options.extra.branchName">
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="inputConfirmUrlType" style="min-width: 120px;">ConfirmUrlType</label>
+            <label class="input-group-text" for="inputConfirmUrlType" style="min-width: 145px;">ConfirmUrlType</label>
           </div>
           <select class="custom-select" id="inputConfirmUrlType" name="confirmUrlType">
             <option value="" selected>Default (Online Only)</option>
@@ -350,7 +356,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
         </div>
         <div class="input-group input-group-sm">
           <div class="input-group-prepend">
-            <label class="input-group-text" for="inputLocale" style="min-width: 120px;">Locale</label>
+            <label class="input-group-text" for="inputLocale" style="min-width: 145px;">Locale</label>
           </div>
           <select class="custom-select" id="inputLocale" name="locale">
             <option value="" selected>Default (Online Only)</option>

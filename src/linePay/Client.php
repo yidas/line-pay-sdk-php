@@ -95,6 +95,7 @@ class Client
         $channelSecret = isset($optParams['channelSecret']) ? $optParams['channelSecret'] : null;
         $merchantDeviceType = isset($optParams['merchantDeviceType']) ? $optParams['merchantDeviceType'] : null;
         $merchantDeviceProfileId = isset($optParams['merchantDeviceProfileId']) ? $optParams['merchantDeviceProfileId'] : null;
+        $subMerchantName = isset($optParams['subMerchantName']) ? $optParams['subMerchantName'] : null;
         $isSandbox = isset($optParams['isSandbox']) ? $optParams['isSandbox'] : false;
         $debug = isset($optParams['debug']) ? $optParams['debug'] : false;
         $this->useUnixTimeNonce = isset($optParams['useUnixTimeNonce']) ? $optParams['useUnixTimeNonce'] : false;
@@ -121,6 +122,10 @@ class Client
         // MerchantDeviceProfileId
         if ($merchantDeviceProfileId) {
             $headers['X-LINE-MerchantDeviceProfileId'] = $merchantDeviceProfileId;
+        }
+        // MerchantSubMerchantName
+        if ($subMerchantName) {
+            $headers['X-LINE-SubMerchantName'] = $subMerchantName;
         }
 
         // Load GuzzleHttp\Client

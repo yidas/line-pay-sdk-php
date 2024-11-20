@@ -16,6 +16,7 @@ $linePay = new Client([
     'channelSecret' => $config['channelSecret'],
     'isSandbox' => ($config['isSandbox']) ? true : false, 
     'merchantDeviceProfileId' => $config['merchantDeviceProfileId'],
+    'subMerchantName' => null,
 ]);
 
 // Successful page URL
