@@ -594,3 +594,5 @@ REFERENCES
 ----------
 
 [LINE Pay Developers - APIs](https://pay.line.me/tw/developers/apis/apis?locale=en_US)
+
+[LINE Pay API (v3) sample codes in multi-languages](https://gist.github.com/yidas/08c0f7009a72102df3b57fcbe3da6681)
