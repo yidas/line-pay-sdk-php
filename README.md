@@ -265,8 +265,7 @@ For Web integration. Merchant will requests a payment and generates payment URL(
 
 > Flow: [`Request`](#request-api) -> [`Confirm`](#confirm-api) -> [`Details`](#payment-details-api) -> [`Refund`](#refund-api)
 
-![PC flow](https://pay.line.me/documents/images/pc_payment_reserve_complete-6cf400a6.png)
-![Mobile flow](https://pay.line.me/documents/images/mobile_payment_reserve_complete-a7d70e88.png)
+![Flow](https://developers-pay.line.me/assets/images/basic-payment-workflow-94b550cfb0c98f7ff1e28cad0cf384f6.svg)
 
 #### Payment Details API
 
@@ -333,10 +332,16 @@ public Response confirm(integer $transactionId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->confirm($transactionId, [
-    "amount" => 250,
-    "currency" => 'TWD',
-]);
+try {
+
+    $response = $linePay->confirm($transactionId, [
+        "amount" => 250,
+        "currency" => 'TWD',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as re-checking
+}
 ```
 
 #### Refund API
@@ -350,7 +355,13 @@ public Response refund(integer $transactionId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->refund($transactionId);
+try {
+
+    $response = $linePay->refund($transactionId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 *For Partial refund:*
@@ -378,15 +389,21 @@ $response = $linePay->check($transactionId);
 If "capture" is "false" when the Merchant calls the “Request API” , the payment is completed only after the Capture API is called.
 
 ```php
-public Response authorizationsCapture(integer $transactionId, array $bodyParams=null)
+public Response capture(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
 ```php
-$response = $linePay->authorizationsCapture($transactionId, [
-    "amount" => 250,
-    "currency" => 'TWD',
-]);
+try {
+
+    $response = $linePay->capture($transactionId, [
+        "amount" => 250,
+        "currency" => 'TWD',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### Void API
@@ -394,12 +411,12 @@ $response = $linePay->authorizationsCapture($transactionId, [
 Voids a previously authorized payment. A payment that has been already captured can be refunded by using the “Refund API”.
 
 ```php
-public Response authorizationsVoid(integer $transactionId, array $bodyParams=null)
+public Response void(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
 ```php
-$response = $linePay->authorizationsVoid($transactionId);
+$response = $linePay->void($transactionId);
 ```
 
 #### Pay Preapproved API
@@ -453,6 +470,8 @@ For POS integration. Customer presents their barcode or QR code to merchants to 
 
 > Flow: [`OneTimeKeysPay`](#payment) -> [`OrdersCheck`](#payment-status-check) -> [`OrdersRefund`](#refund)
 
+![Flow](https://developers-pay.line.me/assets/images/payment-workflow-7eb53e8d587fc7079d23c55ae1c9e69d.svg)
+
 #### Payment
 
 This API is to process payment by reading MyCode provided from LINE Pay App with Merchant's device.
@@ -463,14 +482,20 @@ public Response oneTimeKeysPay(array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->oneTimeKeysPay([
-    'productName' => 'Your product name',
-    'amount' => 250,
-    'currency' => 'TWD',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'orderId' => 'Your order ID',
-    "oneTimeKey"=> 'LINE Pay MyCode',
-]);
+try {
+
+    $response = $linePay->oneTimeKeysPay([
+        'productName' => 'Your product name',
+        'amount' => 250,
+        'currency' => 'TWD',
+        'productImageUrl' => 'https://yourname.com/assets/img/product.png',
+        'orderId' => 'Your order ID',
+        "oneTimeKey"=> 'LINE Pay MyCode',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as re-checking
+}
 ```
 
 #### Payment Status Check
@@ -511,7 +536,13 @@ public Response ordersCapture(string $orderId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->ordersCapture($orderId);
+try {
+
+    $response = $linePay->ordersCapture($orderId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### Refund
@@ -524,7 +555,13 @@ public Response ordersRefund(string $orderId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->ordersRefund($orderId);
+try {
+
+    $response = $linePay->ordersRefund($orderId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### Authorization Details

@@ -330,10 +330,16 @@ public Response confirm(integer $transactionId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->confirm($transactionId, [
-    "amount" => 250,
-    "currency" => 'TWD',
-]);
+try {
+
+    $response = $linePay->confirm($transactionId, [
+        "amount" => 250,
+        "currency" => 'TWD',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as re-checking
+}
 ```
 
 #### 退款 API
@@ -346,7 +352,13 @@ public Response refund(integer $transactionId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->refund($transactionId);
+try {
+
+    $response = $linePay->refund($transactionId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 *For Partial refund:*
@@ -374,15 +386,21 @@ $response = $linePay->check($transactionId);
 如果商家呼叫付款 request API 時 "capture" 為 "false"，則只有呼叫請款 API 後才能完成付款。 confirm API 執行結果只有授權的付款進行請款動作。
 
 ```php
-public Response authorizationsCapture(integer $transactionId, array $bodyParams=null)
+public Response capture(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
 ```php
-$response = $linePay->authorizationsCapture($transactionId, [
-    "amount" => 250,
-    "currency" => 'TWD',
-]);
+try {
+
+    $response = $linePay->capture($transactionId, [
+        "amount" => 250,
+        "currency" => 'TWD',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### 授權作廢 API
@@ -390,12 +408,12 @@ $response = $linePay->authorizationsCapture($transactionId, [
 將已授權的交易作廢。 將先前已授權的付款作廢。已經請款的付款可以藉由使用「退款 API」進行退款。
 
 ```php
-public Response authorizationsVoid(integer $transactionId, array $bodyParams=null)
+public Response void(integer $transactionId, array $bodyParams=null)
 ```
 
 *Example:*
 ```php
-$response = $linePay->authorizationsVoid($transactionId);
+$response = $linePay->void($transactionId);
 ```
 
 #### 自動付款 API
@@ -458,14 +476,20 @@ public Response oneTimeKeysPay(array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->oneTimeKeysPay([
-    'productName' => 'Your product name',
-    'amount' => 250,
-    'currency' => 'TWD',
-    'productImageUrl' => 'https://yourname.com/assets/img/product.png',
-    'orderId' => 'Your order ID',
-    "oneTimeKey"=> 'LINE Pay MyCode',
-]);
+try {
+
+    $response = $linePay->oneTimeKeysPay([
+        'productName' => 'Your product name',
+        'amount' => 250,
+        'currency' => 'TWD',
+        'productImageUrl' => 'https://yourname.com/assets/img/product.png',
+        'orderId' => 'Your order ID',
+        "oneTimeKey"=> 'LINE Pay MyCode',
+    ]);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as re-checking
+}
 ```
 
 #### Payment Status Check
@@ -507,7 +531,13 @@ public Response ordersCapture(string $orderId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->ordersCapture($orderId);
+try {
+
+    $response = $linePay->ordersCapture($orderId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### Refund
@@ -520,7 +550,13 @@ public Response ordersRefund(string $orderId, array $bodyParams=null)
 
 *Example:*
 ```php
-$response = $linePay->ordersRefund($orderId);
+try {
+
+    $response = $linePay->ordersRefund($orderId);
+    
+} catch (\yidas\linePay\exception\ConnectException $e) {
+    // Timeout error handling such as retrying
+}
 ```
 
 #### 取得查看授權記錄 API
