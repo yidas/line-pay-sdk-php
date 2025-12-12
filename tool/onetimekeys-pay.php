@@ -26,16 +26,30 @@ $linePay = new Client([
 // Create an order based on Reserve API parameters
 $orderId = ($input['orderId']) ? $input['orderId'] : "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3);
 $orderParams = [
-    'productName' => $input['productName'],
     'amount' => (integer) $input['amount'],
     'currency' => $input['currency'],
 	'orderId' => $orderId,
     'oneTimeKey' => $input['otk'],
+    "packages" => [
+        [
+            "id" => "pid",
+            "amount" => (float) $input['amount'],
+            "name" => "Package Name",
+            "products" => [
+                [
+                    "name" => $input['productName'],
+                    "quantity" => 1,
+                    "price" => (integer) $input['amount'],
+                    "imageUrl" => ($input['imageUrl']) ? $input['imageUrl'] : 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/220px-LINE_logo.svg.png',
+                ],
+            ],
+        ],
+    ],
 ];
 
 // Capture: false
 if (isset($input['captureFalse'])) {
-    $orderParams['capture'] = false;
+    $orderParams['options']['payment']['capture'] = false;
 }
 // BrachName (Refund API doesn't support)
 if ($input['branchName']) {

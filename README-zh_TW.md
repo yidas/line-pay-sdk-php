@@ -12,12 +12,13 @@ LINE Pay SDK for PHP
 [![License](https://poser.pugx.org/yidas/line-pay-sdk/license?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 [![Total Downloads](https://poser.pugx.org/yidas/line-pay-sdk/downloads?format=flat-square)](https://packagist.org/packages/yidas/line-pay-sdk)
 
-[English](https://github.com/yidas/line-pay-sdk-php/blob/3.9.0/README.md) | 繁體中文
+[English](https://github.com/yidas/line-pay-sdk-php/blob/v4/README.md) | 繁體中文
 
 |SDK 版本|Online API 版本|Offline API 版本|
 |:-:|:-:|:-:|
-|v3.9 (目前版本)|[v4](https://developers-pay.line.me/online-api-v4)|[v2.4](https://developers-pay.line.me/offline-api-v2_4)|
-|[v3](https://github.com/yidas/line-pay-sdk-php/releases/tag/3.8.0)|[v3](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
+|v4 (目前版本)|[v4](https://developers-pay.line.me/online-api-v4)|[v4](https://developers-pay.line.me/offline-api-v4)|
+|[v3.9](https://github.com/yidas/line-pay-sdk-php/tree/3.9.0)|[v4](https://developers-pay.line.me/online-api-v4)|[v2.4](https://developers-pay.line.me/offline-api-v2_4)|
+|[v3](https://github.com/yidas/line-pay-sdk-php/tree/3.8.0)|[v3](https://pay.line.me/tw/developers/apis/onlineApis?locale=en_US)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 |[v2](https://github.com/yidas/line-pay-sdk-php/tree/v2)|[v2](https://pay.line.me/documents/online_v2_en.html)|[v2](https://pay.line.me/tw/developers/apis/documentOffline?locale=en_US)|
 
 

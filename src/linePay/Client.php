@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.9.0
+ * @version 4.0.0
  */
 class Client
 {
@@ -42,13 +42,13 @@ class Client
         'preapprovedCheck' => '/v4/payments/preapprovedPay/{regKey}/check',  
         'preapprovedExpire' => '/v4/payments/preapprovedPay/{regKey}/expire',
         'getUserInfo' => '/v4/payments/{transactionId}/userInfo',
-        'oneTimeKeysPay' => '/v2.4/payments/oneTimeKeys/pay',
-        'ordersCheck' => '/v2.4/payments/orders/{orderId}/check',
-        'ordersVoid' => '/v2.4/payments/orders/{orderId}/void',
-        'ordersCapture' => '/v2.4/payments/orders/{orderId}/capture',
-        'ordersRefund' => '/v2.4/payments/orders/{orderId}/refund',
-        'authorizations' => '/v2.4/payments/authorizations',
-        'detailsV2' => '/v2.4/payments',
+        'oneTimeKeysPay' => '/v4/payments/oneTimeKeys/pay',
+        'ordersCheck' => '/v4/payments/orders/{orderId}/check',
+        'ordersVoid' => '/v4/payments/orders/{orderId}/void',
+        'ordersCapture' => '/v4/payments/orders/{orderId}/capture',
+        'ordersRefund' => '/v4/payments/orders/{orderId}/refund',
+        'authorizations' => '/v4/payments/authorizations',
+        'detailsV2' => '/v4/payments',
     ];
 
     /**
@@ -459,7 +459,7 @@ class Client
      */
     public function oneTimeKeysPay($bodyParams)
     {
-        return $this->requestHandler('v2', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams, [
+        return $this->requestHandler('v3', 'POST', self::$apiUris['oneTimeKeysPay'], null, $bodyParams, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
@@ -474,7 +474,7 @@ class Client
      */
     public function ordersCheck($orderId, $queryParams=null)
     {
-        return $this->requestHandler('v2', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams, null, [
+        return $this->requestHandler('v3', 'GET', str_replace('{orderId}', $orderId, self::$apiUris['ordersCheck']), $queryParams, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
@@ -489,7 +489,7 @@ class Client
      */
     public function ordersVoid($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams, [
+        return $this->requestHandler('v3', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersVoid']), null, $bodyParams, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
@@ -504,7 +504,7 @@ class Client
      */
     public function ordersCapture($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams, [
+        return $this->requestHandler('v3', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersCapture']), null, $bodyParams, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
@@ -519,7 +519,7 @@ class Client
      */
     public function ordersRefund($orderId, $bodyParams=null)
     {
-        return $this->requestHandler('v2', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams, [
+        return $this->requestHandler('v3', 'POST', str_replace('{orderId}', $orderId, self::$apiUris['ordersRefund']), null, $bodyParams, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
@@ -533,7 +533,7 @@ class Client
      */
     public function authorizations($queryParams)
     {
-        return $this->requestHandler('v2', 'GET', self::$apiUris['authorizations'], $queryParams, null, [
+        return $this->requestHandler('v3', 'GET', self::$apiUris['authorizations'], $queryParams, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
