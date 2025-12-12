@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 3.8.0
+ * @version 3.9.0
  */
 class Client
 {
@@ -31,24 +31,24 @@ class Client
      * @var array
      */
     protected static $apiUris = [
-        'request' => '/v3/payments/request',
-        'confirm' => '/v3/payments/{transactionId}/confirm',
-        'refund' => '/v3/payments/{transactionId}/refund',
-        'details' => '/v3/payments',
-        'check' => '/v3/payments/requests/{transactionId}/check',
-        'authorizationsCapture' => '/v3/payments/authorizations/{transactionId}/capture',
-        'authorizationsVoid' => '/v3/payments/authorizations/{transactionId}/void',
-        'preapproved' => '/v3/payments/preapprovedPay/{regKey}/payment',
-        'preapprovedCheck' => '/v3/payments/preapprovedPay/{regKey}/check',  
-        'preapprovedExpire' => '/v3/payments/preapprovedPay/{regKey}/expire',
-        'getUserInfo' => '/v3/payments/{transactionId}/userInfo',
-        'oneTimeKeysPay' => '/v2/payments/oneTimeKeys/pay',
-        'ordersCheck' => '/v2/payments/orders/{orderId}/check',
-        'ordersVoid' => '/v2/payments/orders/{orderId}/void',
-        'ordersCapture' => '/v2/payments/orders/{orderId}/capture',
-        'ordersRefund' => '/v2/payments/orders/{orderId}/refund',
-        'authorizations' => '/v2/payments/authorizations',
-        'detailsV2' => '/v2/payments',
+        'request' => '/v4/payments/request',
+        'confirm' => '/v4/payments/{transactionId}/confirm',
+        'refund' => '/v4/payments/{transactionId}/refund',
+        'details' => '/v4/payments',
+        'check' => '/v4/payments/requests/{transactionId}/check',
+        'authorizationsCapture' => '/v4/payments/authorizations/{transactionId}/capture',
+        'authorizationsVoid' => '/v4/payments/authorizations/{transactionId}/void',
+        'preapproved' => '/v4/payments/preapprovedPay/{regKey}/payment',
+        'preapprovedCheck' => '/v4/payments/preapprovedPay/{regKey}/check',  
+        'preapprovedExpire' => '/v4/payments/preapprovedPay/{regKey}/expire',
+        'getUserInfo' => '/v4/payments/{transactionId}/userInfo',
+        'oneTimeKeysPay' => '/v2.4/payments/oneTimeKeys/pay',
+        'ordersCheck' => '/v2.4/payments/orders/{orderId}/check',
+        'ordersVoid' => '/v2.4/payments/orders/{orderId}/void',
+        'ordersCapture' => '/v2.4/payments/orders/{orderId}/capture',
+        'ordersRefund' => '/v2.4/payments/orders/{orderId}/refund',
+        'authorizations' => '/v2.4/payments/authorizations',
+        'detailsV2' => '/v2.4/payments',
     ];
 
     /**
