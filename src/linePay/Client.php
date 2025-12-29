@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request;
  * LINE Pay Client
  * 
  * @author  Nick Tsai <myintaer@gmail.com>
- * @version 4.0.0
+ * @version 4.0.1
  */
 class Client
 {
@@ -48,7 +48,6 @@ class Client
         'ordersCapture' => '/v4/payments/orders/{orderId}/capture',
         'ordersRefund' => '/v4/payments/orders/{orderId}/refund',
         'authorizations' => '/v4/payments/authorizations',
-        'detailsV2' => '/v4/payments',
     ];
 
     /**
@@ -261,9 +260,7 @@ class Client
      */
     public function details($queryParams, $version="v3")
     {   
-        $version = ($version == "v2") ? $version : "v3";
-        $apiUrl = ($version == "v2") ? self::$apiUris['detailsV2'] : self::$apiUris['details'];
-        return $this->requestHandler($version, 'GET', $apiUrl, $queryParams, null, [
+        return $this->requestHandler('v3', 'GET', self::$apiUris['details'], $queryParams, null, [
             'connect_timeout' => 5,
             'timeout' => 20,
             ]);
