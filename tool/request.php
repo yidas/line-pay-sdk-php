@@ -23,7 +23,7 @@ $linePay = new \yidas\linePay\Client([
 
 // Create an order based on Reserve API parameters
 $orderParams = [
-    "amount" => (integer) $input['amount'],
+    "amount" => (float) $input['amount'],
     "currency" => $input['currency'],
     "orderId" => ($input['orderId']) ? $input['orderId'] : "SN" . date("YmdHis") . (string) substr(round(microtime(true) * 1000), -3),
     "packages" => [
@@ -35,8 +35,8 @@ $orderParams = [
                 [
                     "name" => $input['productName'],
                     "quantity" => 1,
-                    "price" => (integer) $input['amount'],
-                    "imageUrl" => ($input['imageUrl']) ? $input['imageUrl'] : 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/220px-LINE_logo.svg.png',
+                    "price" => (float) $input['amount'],
+                    // "imageUrl" => ($input['imageUrl']) ? $input['imageUrl'] : 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/220px-LINE_logo.svg.png',
                 ],
             ],
         ],
@@ -46,7 +46,10 @@ $orderParams = [
         "cancelUrl" => "{$baseUrl}/index.php",
     ],
 ];
-
+// imageUrl of packages products 
+if ($input['imageUrl'] != 'none') {
+    $orderParams['packages'][0]['products'][0]['imageUrl'] = ($input['imageUrl']) ? $input['imageUrl'] : 'https://scdn.line-apps.com/linepay/portal/assets/img/linepay-logo-tw.png';
+}
 // Capture: false
 if (isset($input['captureFalse'])) {
     $orderParams['options']['payment']['capture'] = false;

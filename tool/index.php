@@ -303,7 +303,7 @@ $logs = isset($_SESSION['logs']) ? $_SESSION['logs'] : [];
             <div class="input-group-prepend">
               <span class="input-group-text" style="min-width: 135px;">ImageUrl</span>
             </div>
-            <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl (Online Only)">
+            <input type="text" name="imageUrl" class="form-control" placeholder="Fill in to overwrite imageUrl ('none' to omit) (Online Only)">
           </div>
           <div class="input-group input-group-sm">
             <div class="input-group-prepend">
