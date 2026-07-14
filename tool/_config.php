@@ -146,5 +146,5 @@ class Merchant
  */
 function printDateTime($timestamp)
 {
-    return DateTime::createFromFormat('U.u', $timestamp)->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format("Y-m-d H:i:s.u");
+    return DateTime::createFromFormat('U.u', sprintf('%.6f', $timestamp))->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format("Y-m-d H:i:s.u");
 }
